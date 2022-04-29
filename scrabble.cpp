@@ -3,6 +3,8 @@
 #include <array>
 
 #include "LinkedList.h"
+#include "Node.h"
+#include "Tile.h"
 #include "MainMenu.cpp"
 
 using std::cin; 
@@ -20,5 +22,10 @@ int main(void) {
 
    MainMenu menu;
 
+   LinkedList list;
+   list.append("pirrhannas");
+   list.printNodes();
+
    return EXIT_SUCCESS;
 }
+

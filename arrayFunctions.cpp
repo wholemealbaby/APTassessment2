@@ -8,7 +8,7 @@ using std::endl;
 using std::array;
 using std::string;
 
-template <typename T, std::size_t size> // Parameterise the element type and size
+template <typename T, std::size_t size>
 int arrayContains(const std::array<T, size>& expInputs, T userInput){
     bool validInput = false;
     int i = 0;
