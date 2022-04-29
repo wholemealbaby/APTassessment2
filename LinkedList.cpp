@@ -19,10 +19,10 @@ LinkedList::LinkedList() {
 LinkedList::~LinkedList(){
    Node* currentNode = head;
    // Iterating through the list and deleting the previous node
-   while (currentNode->rightNeighbour != nullptr){
-      currentNode = currentNode->rightNeighbour;
-      delete currentNode->leftNeighbour;
-      currentNode->leftNeighbour = nullptr;
+   while (currentNode->next != nullptr){
+      currentNode = currentNode->next;
+      delete currentNode->prev;
+      currentNode->prev = nullptr;
    }
 
    // Deleting final node and setting pointers to null
@@ -31,6 +31,21 @@ LinkedList::~LinkedList(){
    head = nullptr;
    tail = nullptr;
 }
+
+ Node* LinkedList::operator[](int index){
+   Node* currentNode;
+   if (index == -1){
+      currentNode = tail;
+   }
+
+   else{
+      currentNode = head;
+      for (int i = 0; i<index; i++){
+         currentNode = currentNode->next;
+      }
+   }
+   return currentNode;
+ }
 
 // Appends a Node to the end of the array
 void LinkedList::append(Node* incomingNode){
@@ -41,16 +56,16 @@ void LinkedList::append(Node* incomingNode){
       // pointers point to null
       head = incomingNode;
       tail = incomingNode;
-      incomingNode->leftNeighbour = nullptr;
-      incomingNode->rightNeighbour = nullptr;
+      incomingNode->prev = nullptr;
+      incomingNode->next = nullptr;
    }
 
    // If the list is not empty
    else{
 
       // Insert the node at the back of the list and set it as the tail
-      incomingNode->leftNeighbour = tail;
-      incomingNode->rightNeighbour = nullptr;
+      incomingNode->prev = tail;
+      incomingNode->next = nullptr;
       tail = incomingNode;
    }
 
@@ -58,28 +73,21 @@ void LinkedList::append(Node* incomingNode){
 }
 
 // Appends a Node to the end of the array
-void LinkedList::append(string data){
-   Node* incomingNode = new Node(data);
+void LinkedList::append(string incomingNodeData){;
    // If the list is empty
-   if (tail == nullptr){
+   if (head == nullptr){
 
-      // Set the tail and head to the node and ensure that its neighbour
-      // pointers point to null
-      head = incomingNode;
-      tail = incomingNode;
-      incomingNode->leftNeighbour = nullptr;
-      incomingNode->rightNeighbour = nullptr;
+      // Set the tail and head to a Node with the given data and
+      head = new Node(incomingNodeData);
+      tail = head;
    }
 
    // If the list is not empty
    else{
-
       // Insert the node at the back of the list and set it as the tail
-      incomingNode->leftNeighbour = tail;
-      incomingNode->rightNeighbour = nullptr;
-      tail = incomingNode;
+      tail = new Node(incomingNodeData, tail, nullptr);
+      tail->prev->next = tail;
    }
-   incomingNode = nullptr;
    length++;
 }
 
@@ -90,15 +98,29 @@ void LinkedList::printNodes(){
 
    else{
       Node* currentNode = head;
-      cout << currentNode->data << endl;
-      while (currentNode->rightNeighbour != nullptr){
-         cout << currentNode->rightNeighbour->data << endl;
-         currentNode = currentNode->rightNeighbour;
+      while (currentNode != nullptr){
+         cout << currentNode->data << endl;
+         currentNode = currentNode->next;
       }
+      currentNode = nullptr;
    }
-
 }
 
-// LinkedList::insert(Node* incomingNode, int index){
+void LinkedList::insert(string incomingNodeData, int index){
+   if (index == 0) {
+      head->prev = new Node(incomingNodeData, nullptr, head);
+      head = head->prev;
+   }
 
-// }
+   else if (index == length){
+      tail->next = new Node(incomingNodeData, tail, nullptr);
+      tail = tail->next;
+   }
+
+   else{
+      // Node that already exists at the index
+      Node* prexisitngNode = (*this)[index];
+      prexisitngNode->prev->next = new Node(incomingNodeData, prexisitngNode->prev, prexisitngNode);
+      prexisitngNode->prev = prexisitngNode->prev->next;
+   }
+}

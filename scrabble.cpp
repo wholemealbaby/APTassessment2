@@ -24,7 +24,9 @@ int main(void) {
 
    LinkedList list;
    list.append("pirrhannas");
-   list.printNodes();
+   list.append("bears");
+   list.append("cockraoches");
+
 
    return EXIT_SUCCESS;
 }

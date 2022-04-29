@@ -13,15 +13,15 @@ class Node {
    // Default constructor
    Node(string data);
    // Constructor, recieves tile value, left and right neighbour pointers
-   Node(string data, Node* leftNeighbour, Node* rightNeighbour);
+   Node(string data, Node* prev, Node* next);
    Node(Node& other);
 
    // Scrabble tile value of the Node
    string data;
 
    // Left and right neighbour pointers
-   Node* leftNeighbour;
-   Node* rightNeighbour;
+   Node* prev;
+   Node* next;
 };
 
 #endif // ASSIGN2_NODE_H
