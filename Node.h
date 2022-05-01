@@ -14,6 +14,7 @@ class Node {
    Node(string data);
    // Constructor, recieves tile value, left and right neighbour pointers
    Node(string data, Node* prev, Node* next);
+   Node(Node& other, Node* prev, Node* next);
    Node(Node& other);
 
    // Scrabble tile value of the Node

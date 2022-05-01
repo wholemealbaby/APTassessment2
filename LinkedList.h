@@ -20,9 +20,21 @@ public:
    // Returns the size of the list
    int size();
 
+   void clear();
+
    void printNodes();
 
-   Node* operator[](int index); 
+   void sort();
+
+   Node* operator[](int index);
+
+   Node* getHead();
+   Node* getTail();
+
+   void copy(LinkedList* list);
+
+   Node* get(int index);
+
 
 
 private:

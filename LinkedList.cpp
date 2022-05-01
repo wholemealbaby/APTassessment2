@@ -17,6 +17,11 @@ LinkedList::LinkedList() {
 }
 
 LinkedList::~LinkedList(){
+
+   this->clear();
+}
+
+void LinkedList::clear(){
    Node* currentNode = head;
    // Iterating through the list and deleting the previous node
    while (currentNode->next != nullptr){
@@ -30,6 +35,9 @@ LinkedList::~LinkedList(){
    currentNode = nullptr;
    head = nullptr;
    tail = nullptr;
+
+   // Resetting length to 0
+   length = 0;
 }
 
  Node* LinkedList::operator[](int index){
@@ -46,6 +54,17 @@ LinkedList::~LinkedList(){
    }
    return currentNode;
  }
+
+//  Returns the head node of the list
+Node* LinkedList::getHead(){
+   return head;
+}
+
+// Returns the tail node of the list
+Node* LinkedList::getTail(){
+   return tail;
+}
+
 
 // Appends a Node to the end of the array
 void LinkedList::append(Node* incomingNode){
@@ -70,6 +89,10 @@ void LinkedList::append(Node* incomingNode){
    }
 
    length++;
+}
+
+int LinkedList::size(){
+   return length;
 }
 
 // Appends a Node to the end of the array
@@ -120,7 +143,64 @@ void LinkedList::insert(string incomingNodeData, int index){
    else{
       // Node that already exists at the index
       Node* prexisitngNode = (*this)[index];
-      prexisitngNode->prev->next = new Node(incomingNodeData, prexisitngNode->prev, prexisitngNode);
+
+      prexisitngNode->prev->next = new Node 
+      (incomingNodeData, prexisitngNode->prev, prexisitngNode);
+
       prexisitngNode->prev = prexisitngNode->prev->next;
    }
+   length++;
+}
+
+// Deletes the contents of the list and copies the contents of the given list
+void LinkedList::copy(LinkedList* list){
+   // Clear this list
+   this->clear();
+   // Append the head of the given list
+   append(list->getHead()->data);
+   
+   // Iterate through the given list starting at the head and appending 
+   // each element to this list
+   Node* currentNode = list->getHead();
+   while (currentNode->next != nullptr){
+      append(currentNode->next->data);
+      currentNode = currentNode->next;
+   }
+}
+
+Node* LinkedList::get(int index){
+   return (*this)[index];
+}
+
+void LinkedList::sort(){
+   LinkedList* sorted = new LinkedList();
+   sorted->append(this->head->data);
+
+   // For each element in unsorted (except for the first)
+   for (int unsortedi = 1; unsortedi<this->length; unsortedi++){
+      Node* unsortedNode = (*this)[unsortedi];
+
+      // current index in sorted array
+      int sortedi = 0;
+      // flag indicated if the unsortedNode has been inserted into sorted
+      bool inserted = false;
+      // Iterate through sorted
+      while(inserted == false && sortedi<sorted->length){
+         Node* sortedNode = sorted->get(sortedi);
+         // And insert the current unsortedNode at the point inhabbited
+         // by the first sortedNode that is smalled than unsortedNode
+         if (sortedNode->data < unsortedNode->data){
+            sorted->insert(unsortedNode->data, sortedi);
+            inserted = true;
+         }
+         sortedi++;
+      }
+      if (inserted == false){
+         sorted->append(unsortedNode->data);
+      }
+
+   }
+
+   copy(sorted);
+   delete sorted;
 }
