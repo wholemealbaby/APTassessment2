@@ -30,7 +30,7 @@ class Game {
     void passTurn(Player* player);
 
     // Deals each player 7 random tiles from the tile bag
-    void dealTiles();
+    void dealTiles(int numTiles);
 
     Player* player1;
     Player* player2;

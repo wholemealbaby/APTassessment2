@@ -72,9 +72,9 @@ void Game::fillTileBag(){
     }
 }
 
-// Deals each player 7 random tiles from the tile bag
-void Game::dealTiles(){
-    for (int i = 0; i < 7; i++){
+// Deals each player enough random tiles from the tile bag to result in them having 7 tiles total
+void Game::dealTiles(int numTiles){
+    for (int i = 0; i < numTiles; i++){
         Tile* tile1 = tileBag.pop(rand() % tileBag.size());
         Tile* tile2 = tileBag.pop(rand() % tileBag.size());
         player1->hand.append(tile1);
