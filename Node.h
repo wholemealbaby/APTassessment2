@@ -2,12 +2,12 @@
 #ifndef ASSIGN2_NODE_H
 #define ASSIGN2_NODE_H
 
-#include "Tile.h"
 #include <iostream>
 
 using std::string;
 
 // Scrabble double linked list node
+
 class Node {
    public:
    // Default constructor

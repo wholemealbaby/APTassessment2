@@ -35,11 +35,19 @@ public:
 
    Node* get(int index);
 
+   // Search for a node within the list
+   // with the given data
+   Node* search(string data);
+
+   // Pop the element at the given index
+   Node* pop(int index);
 
 
 private:
    Node* head;
    Node* tail;
+
+protected:
    int length;
 
 };

@@ -3,7 +3,7 @@
 
 #include "Node.h"
 #include "LinkedList.h"
-#include "Tile.h"
+
 
 using std::cout;
 using std::cin;
@@ -17,8 +17,9 @@ LinkedList::LinkedList() {
 }
 
 LinkedList::~LinkedList(){
-
-   this->clear();
+   if (length > 0){
+      this->clear();
+   }
 }
 
 void LinkedList::clear(){
@@ -40,7 +41,7 @@ void LinkedList::clear(){
    length = 0;
 }
 
- Node* LinkedList::operator[](int index){
+Node* LinkedList::operator[](int index){
    Node* currentNode;
    if (index == -1){
       currentNode = tail;
@@ -54,17 +55,6 @@ void LinkedList::clear(){
    }
    return currentNode;
  }
-
-//  Returns the head node of the list
-Node* LinkedList::getHead(){
-   return head;
-}
-
-// Returns the tail node of the list
-Node* LinkedList::getTail(){
-   return tail;
-}
-
 
 // Appends a Node to the end of the array
 void LinkedList::append(Node* incomingNode){
@@ -93,6 +83,16 @@ void LinkedList::append(Node* incomingNode){
 
 int LinkedList::size(){
    return length;
+}
+
+//  Returns the head node of the list
+Node* LinkedList::getHead(){
+   return head;
+}
+
+// Returns the tail node of the list
+Node* LinkedList::getTail(){
+   return tail;
 }
 
 // Appends a Node to the end of the array
@@ -203,4 +203,64 @@ void LinkedList::sort(){
 
    copy(sorted);
    delete sorted;
+}
+
+// Searches for a Node with the given data 
+// in the list and returns its pointer
+Node* LinkedList::search(string data){
+   bool found = false;
+   Node* currentNode = head;
+   while (found != true && currentNode != nullptr){
+      if (currentNode->data == data){
+         found = true;
+      }
+      else{
+         currentNode = currentNode->next;
+      }
+   }
+   return currentNode;
+}
+
+// Pops the node at the given index
+Node* LinkedList::pop(int index){
+   Node* returnPointer;
+   // Start case
+   if (index == 0){
+      // Returning the head
+      returnPointer = head;
+      // Setting the head to the next value
+      head = head->next;
+
+      // If the list is not empty
+      if (head != nullptr){
+         // Removing the old head from the list
+         head->prev = nullptr;
+      }
+   }
+   
+   // End case
+   else if (index == -1){
+      // Returning the tail
+      returnPointer = tail;
+      // Setting the tail to the previous value;
+      tail = tail->prev;
+      // If the list is not empty
+      if (tail != nullptr){
+         // Removing the old tail from the list
+         tail->next = nullptr;
+      }
+   }
+
+   else {
+      returnPointer = (*this)[index];
+      // Setting the node behind the target node's next value
+      // to the node in front of the target node
+      returnPointer->prev->next = returnPointer->next;
+      // Setting the node in front of the target node's prev value
+      // to the node behind the target node
+      returnPointer->next->prev = returnPointer->prev;
+   }
+
+   length--;
+   return returnPointer;
 }
