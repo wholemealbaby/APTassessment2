@@ -50,6 +50,10 @@ class TileList {
     // Searches for a Tile with the given letter 
     // in the list and returns its index
     int index(string letter);
+
+    // Searches for a matching tile in the list and
+    // returns its index
+    int index(Tile* target);
    
     // Pops the tile at the given index
     Tile* pop(int index);

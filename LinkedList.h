@@ -39,9 +39,13 @@ public:
    // with the given data
    Node* search(string data);
 
-   // Searches for a Node with the given letter 
+   // Searches for a node with the given data
    // in the list and returns its index
    int index(string data);
+
+   // Searches for a matching node in the list
+   // and returns its index
+   int index(Node* data);
 
    // Pop the element at the given index
    Node* pop(int index);

@@ -315,3 +315,34 @@ int TileList::index(string letter){
    return index;
 }
 
+// Searches for a matching tile in the list and
+// returns its index
+int TileList::index(Tile* target){
+
+   // Flag for whether the tile has been found
+   bool found = false;
+   // The tile currently being examined
+   Tile* currentTile = head;
+   // The index of the tile being examined
+   int index = 0;
+   while (found != true && currentTile != nullptr){
+      // If the current tile's letter matches the target letter
+      if (currentTile->data == target->data){
+         found = true;
+      }
+      // Otherwise check the next tile
+      else{
+         currentTile = currentTile->next;
+         index++;
+      }
+   }
+   
+   // If the tile was not found return -1 to indicate
+   // that a tile with that letter does not exist within
+   // this list
+   if (found == false){
+      index = -1;
+   }
+   // Return the index of the found tile
+   return index;
+}
