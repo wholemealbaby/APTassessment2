@@ -42,8 +42,13 @@ Game::~Game(){
 }
 
 void Game::placeTile(Player* player, Tile* tile, string pos){
-    tile->posX = pos[0]-65;
+    // Derives the integer x value buy substracting the ascii value 
+    // of 'A' from the character in the pos string
+    tile->posX = pos[0]-65; 
     tile->posY = stoi(pos.substr(1, pos.size()-1));
+    // Removing the tile from the player's hand
+    player->hand.pop(player->hand.index(tile));
+    // Placing the tile on the board
     board.placeTile(tile, tile->posX, tile->posY);
 }
 
