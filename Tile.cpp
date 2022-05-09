@@ -17,6 +17,7 @@ Tile::Tile(tuple<string, int> data){
 }
 
 Tile::Tile(tuple<string, int> data, Tile* prev, Tile* next){
+    this->data = data;
     this->letter = get<0>(data);
     this->value = get<1>(data);
     posX = -1;

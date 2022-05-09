@@ -48,7 +48,9 @@ public:
    int index(Node* data);
 
    // Pop the element at the given index
-   Node* pop(int index);
+   void pop(int index);
+
+   void pop(int index, Node*& returnPtr);
 
 
 private:

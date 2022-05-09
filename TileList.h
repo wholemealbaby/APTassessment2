@@ -3,6 +3,7 @@
 #define ASSIGN2_TILELIST_H
 
 #include <tuple>
+#include <memory>
 #include "Tile.h"
 
 using std::tuple;
@@ -54,9 +55,13 @@ class TileList {
     // Searches for a matching tile in the list and
     // returns its index
     int index(Tile* target);
-   
+
     // Pops the tile at the given index
-    Tile* pop(int index);
+    void pop(int index);
+   
+    // Pops the tile at the given index and stores it
+    // at the given pointer
+    void pop(int index, Tile*& returnPointer);
     
     private:
     Tile* head;
