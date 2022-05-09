@@ -25,7 +25,6 @@ bool Board::placeTile(Tile* tile, int row, int col){
     if (boardState[row][col] != ""){
         boardState[row][col] = tile->letter;
         tiles.append(tile);
-        delete tile;
         placementSuccess = true;
     }
 
