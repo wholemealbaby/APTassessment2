@@ -43,6 +43,9 @@ class Game {
     // the tile bag
     void fillTileBag();
 
+    // Main method for gameplay
+    void main();
+
 };
 
 #endif // ASSIGN2_NODE_

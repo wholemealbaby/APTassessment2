@@ -25,6 +25,9 @@ class TileList {
     // Prints the tiles in the list
     void printTiles();
 
+    // Prints the tiles in the list horizontally
+    void printTiles2();
+
     // Deletes the contents of the list and copies the contents of the given list
     void copy(TileList* list);
 

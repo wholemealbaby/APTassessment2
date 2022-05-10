@@ -5,6 +5,9 @@
 #include <iostream>
 #include <array>
 #include "arrayFunctions.cpp"
+#include "Player.h"
+#include "Game.h"
+#include "Board.h"
 
 
 using std::string;
@@ -56,9 +59,23 @@ class MainMenu{
     }
 
     void newGame(){
-        cout<<"Creating New Game"<<endl;
+        array<String, 2> usernames;
+        String username;
+
+        for (int repeat = 0; repeat < 2; repeat++){
+            cout << "Enter a name for player ";
+            cout << repeat;
+            cout << " (uppercase characters only)" << endl;
+            cout << "> ";
+            cin >> username;
+            cout<<endl<<endl;
+            usernames.at(repeat) = username;
+        }
+        cout << "Let's Play!" << endl << endl;
+
+        Game game(usernames[0], usernames[1]);
         return;
-        
+    
     }
 
     void loadGame(){

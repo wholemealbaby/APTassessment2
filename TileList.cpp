@@ -175,18 +175,20 @@ void TileList::insert(tuple<string, int> incomingTileData, int index){
    length++;
 }
 
+
 // Print all the tiles in the list
-void TileList::printTiles(){
+void TileList::printTiles2(){
    if (head == nullptr){
       cout<< "The list is empty" << endl;
    }
 
    else{
       Tile* currentTile = head;
-      while (currentTile != nullptr){
-         cout << currentTile->letter << currentTile->value << endl;
+      while (currentTile->next != nullptr){
+         cout << currentTile->letter << "-" << currentTile->value << ", ";
          currentTile = currentTile->next;
       }
+      cout << currentTile->letter << "-" << currentTile->value << endl;
       currentTile = nullptr;
    }
 }
