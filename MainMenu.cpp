@@ -72,6 +72,14 @@ class MainMenu{
         cout<<"Student ID: s3850201"<<endl;
         cout<<"Email: s3850201@student.rmit.edu.au"<<endl;
         cout<<"----------------------------------"<<endl;
+
+        cout<<"----------------------------------"<<endl;
+        cout<<"Name: Xander Broadbear"<<endl;
+        cout<<"Student ID: s3902024"<<endl;
+        cout<<"Email: s3902024@student.rmit.edu.au"<<endl;
+        cout<<"----------------------------------"<<endl;
+
+        
     }
 };
 #endif

@@ -29,8 +29,13 @@ class Game {
     // A player passes their turn
     void passTurn(Player* player);
 
-    // Deals each player 7 random tiles from the tile bag
+    // Deals each player a defined number of random tiles from the tile bag
     void dealTiles(int numTiles);
+
+    void loadGame(String fileName);
+
+    int getValue(String letter);
+
 
     Player* player1;
     Player* player2;
