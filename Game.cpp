@@ -4,9 +4,11 @@
 #include "Tile.h"
 #include "Board.h"
 #include <iostream>
+#include <fstream>
 #include <tuple>
 #include <vector>
 #include <fstream>
+#include <string>
 
 using std::string;
 using std::tuple;
@@ -16,14 +18,15 @@ using std::endl;
 using std::cout;
 using std::make_tuple;
 using std::stoi;
+using std::ifstream;
+using std::ofstream;
+
 
 Game::Game(){
     this->player1 = new Player("Player1");
     this->player2 = new Player("Player2");
     currentPlayer = player1;
     fillTileBag();
-    cout<<"bagfilled" <<endl;
-    tileBag.printTiles();
 }
 
 Game::Game(string player1Name, string player2Name){
@@ -31,8 +34,6 @@ Game::Game(string player1Name, string player2Name){
     this->player2 = new Player(player2Name);
     currentPlayer = player1;
     fillTileBag();
-    cout<<"bagfilled" <<endl;
-    tileBag.printTiles();
 }
 
 Game::~Game(){
@@ -43,25 +44,45 @@ Game::~Game(){
 }
 
 void Game::placeTile(Player* player, Tile* tile, string pos){
-    tile->posX = pos[0]-65;
+    // Derives the integer x value buy substracting the ascii value 
+    // of 'A' from the character in the pos string
+    tile->posX = pos[0]-65; 
     tile->posY = stoi(pos.substr(1, pos.size()-1));
+    // Removing the tile from the player's hand
+    player->hand.pop(player->hand.index(tile));
+    // Placing the tile on the board
     board.placeTile(tile, tile->posX, tile->posY);
+    delete tile;
+    board.printBoard();
 }
 
 // Reads the tiles from tile set file and populates
 // the tile bag
 void Game::fillTileBag(){
+    // Current line of file
     string line;
+    // tile info string that have already been read from
+    // the file
     vector<string> tiles;
 
-    while(std::getline(cin, line)){
-        tiles.push_back(line);
+    // Iterate through tiles file and append each tile to
+    // tiles vector
+    ifstream myfile ("ScrabbleTiles.txt");
+    if (myfile.is_open()){
+        while ( getline (myfile,line) ){
+            tiles.push_back(line);
+        }
+        myfile.close();
     }
-    cout << endl << endl;
-    
-    tiles.erase(tiles.begin());
+
+    // If the file doesn't exist
+    else cout << "Unable to open ScrabbleTiles.txt"; 
+
+
+    // For each tile read from, append its data to the tileBag
     for (string tile: tiles){
         string letter(1, tile[0]);
+        
         int value = stoi(tile.substr(2, tile.size()-1));
         tuple<string, int> tileData = make_tuple(letter, value);
         tileBag.append(tileData);
@@ -71,15 +92,56 @@ void Game::fillTileBag(){
 // Deals each player enough random tiles from the tile bag to result in them having 7 tiles total
 void Game::dealTiles(int numTiles){
     for (int i = 0; i < numTiles; i++){
-        Tile* tile1 = tileBag.pop(rand() % tileBag.size());
-        Tile* tile2 = tileBag.pop(rand() % tileBag.size());
-        player1->hand.append(tile1);
-        player2->hand.append(tile2);
+        Tile* tile1; 
+        tileBag.pop(std::rand() % tileBag.size(), tile1);
+        Tile* tile2; 
+        tileBag.pop(std::rand() % tileBag.size(), tile2);
+        player1->hand.insert(tile1->data, -1);
+        player2->hand.insert(tile2->data, -1);
+        delete tile1;
+        delete tile2;
     }
 }
 
+void Game::saveGame(Player player1, Player player2, String currentPlayer, String tileBag, String[] boardState){
+    String fileName = player1.name + player2.name + ".txt";
+    String player1hand;
+    String player2hand;
+    ofstream saveFile (fileName);
+    saveFile << player1.name << endl;
+    saveFile << player1.score << endl;
+
+    while(player1.hand.size() > 0){
+        player1hand += player1.hand.get(0)->letter;
+        player1.hand.pop(0);
+    }
+
+    saveFile << player2.name << endl;
+    saveFile << player2.score << endl;
+
+    while(player1.hand.size() > 0){
+        player1hand += player1.hand.get(0)->letter;
+        player1.hand.pop(0);
+    }
+
+    saveFile << currentPlayer << endl;
+    saveFile << tileBag << endl;
+
+    for(int i = 0;i <= bo)
+
+    //to do
+
+    //Tile Bag
+    //Board state
+
+
+
+
+
+}
 void Game::loadGame(String fileName){
     // The save file is as follows, line-by-line.
+
     // Player 1 name
     // Player 1 score
     // Player 1 hand
@@ -90,7 +152,6 @@ void Game::loadGame(String fileName){
     // Tile bag state
     // Board state
 
-
     // Create a text string, which is used to output the text file
     string gameSave;
     int boardSize = 15;
@@ -99,11 +160,10 @@ void Game::loadGame(String fileName){
     TileList* boardList = new TileList();
 
     // Read from the text file
-    std::ifstream ReadFile("filename.txt");
+    std::ifstream ReadFile(fileName);
 
     // Use a while loop together with the getline() function to read the file line by line
     while (std::getline (ReadFile, gameSave)) {
-        
         info.push_back(gameSave);
     }
     // set the variables based on each line from the file

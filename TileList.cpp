@@ -18,6 +18,7 @@ TileList::TileList(){
 }
 
 TileList::~TileList(){
+   
    this->clear();
 }
 
@@ -25,10 +26,12 @@ void TileList::clear(){
    if (length > 0){
       Tile* currentTile = head;
       // Iterating through the list and deleting the previous Tile
+      int count = 0;
       while (currentTile->next != nullptr){
          currentTile = currentTile->next;
          delete currentTile->prev;
          currentTile->prev = nullptr;
+         count++;
       }
 
       // Deleting final Tile and setting pointers to null
@@ -110,11 +113,8 @@ void TileList::append(tuple<string, int> incomingTileData){;
 
    // If the list is not empty
    else{
-      // Insert the Tile at t he back of the list and set it as the tail
+      // Insert the Tile at the back of the list and set it as the tail
       tail = new Tile(incomingTileData, tail, nullptr);
-      if (length == 1){
-         head->next = tail;
-      }
       tail->prev->next = tail;
    }
    length++;
@@ -144,15 +144,19 @@ void TileList::append(Tile* incomingTile){;
 
 // Inserts a Tile at the given index
 void TileList::insert(tuple<string, int> incomingTileData, int index){
+   if (length == 0){
+      head = new Tile(incomingTileData);
+      tail = head;
+   }
 
    // First element case
-   if (index == 0) {
+   else if (index == 0) {
       head->prev = new Tile(incomingTileData, nullptr, head);
       head = head->prev;
    }
 
    // Last element case
-   else if (index == length){
+   else if (index == length || index == -1){
       tail->next = new Tile(incomingTileData, tail, nullptr);
       tail = tail->next;
    }
@@ -240,12 +244,12 @@ void TileList::sort(){
 }
 
 // Pops the tile at the given index
-Tile* TileList::pop(int index){
-   Tile* returnPointer;
+void TileList::pop(int index){
+   Tile* targetPtr;
    // Start case
    if (index == 0){
       // Returning the head
-      returnPointer = head;
+      targetPtr = head;
       // Setting the head to the next value
       head = head->next;
 
@@ -259,7 +263,7 @@ Tile* TileList::pop(int index){
    // End case
    else if (index == -1){
       // Returning the tail
-      returnPointer = tail;
+      targetPtr = tail;
       // Setting the tail to the previous value;
       tail = tail->prev;
       // If the list is not empty
@@ -270,17 +274,64 @@ Tile* TileList::pop(int index){
    }
 
    else {
-      returnPointer = (*this)[index];
+      targetPtr = (*this)[index];
       // Setting the node behind the target node's next value
       // to the node in front of the target node
-      returnPointer->prev->next = returnPointer->next;
+      targetPtr->prev->next = targetPtr->next;
       // Setting the node in front of the target node's prev value
       // to the node behind the target node
-      returnPointer->next->prev = returnPointer->prev;
+      targetPtr->next->prev = targetPtr->prev;
    }
 
    length--;
-   return returnPointer;
+   delete targetPtr;
+}
+
+// Pops the tile at the given index and stores it
+// at the given pointer
+void TileList::pop(int index, Tile*& returnPtr){
+   // The pointer at the target index
+   Tile* targetPtr;
+   // Start case
+   if (index == 0){
+      // Returning the head
+      targetPtr = head;
+      // Setting the head to the next value
+      head = head->next;
+
+      // If the list is not empty
+      if (head != nullptr){
+         // Removing the old head from the list
+         head->prev = nullptr;
+      }
+   }
+   
+   // End case
+   else if (index == -1){
+      // Returning the tail
+      targetPtr = tail;
+      // Setting the tail to the previous value;
+      tail = tail->prev;
+      // If the list is not empty
+      if (tail != nullptr){
+         // Removing the old tail from the list
+         tail->next = nullptr;
+      }
+   }
+
+   else {
+      targetPtr = (*this)[index];
+      // Setting the node behind the target node's next value
+      // to the node in front of the target node
+      targetPtr->prev->next = targetPtr->next;
+      // Setting the node in front of the target node's prev value
+      // to the node behind the target node
+      targetPtr->next->prev = targetPtr->prev;
+   }
+   // Copying returnPtr to targetPtr and deleting targetPtr
+   returnPtr = new Tile(targetPtr, nullptr, nullptr);
+   delete targetPtr;
+   length--;
 }
 
 // Searches for a Tile with the given letter 
@@ -315,3 +366,34 @@ int TileList::index(string letter){
    return index;
 }
 
+// Searches for a matching tile in the list and
+// returns its index
+int TileList::index(Tile* target){
+
+   // Flag for whether the tile has been found
+   bool found = false;
+   // The tile currently being examined
+   Tile* currentTile = head;
+   // The index of the tile being examined
+   int index = 0;
+   while (found != true && currentTile != nullptr){
+      // If the current tile's letter matches the target letter
+      if (currentTile->data == target->data){
+         found = true;
+      }
+      // Otherwise check the next tile
+      else{
+         currentTile = currentTile->next;
+         index++;
+      }
+   }
+   
+   // If the tile was not found return -1 to indicate
+   // that a tile with that letter does not exist within
+   // this list
+   if (found == false){
+      index = -1;
+   }
+   // Return the index of the found tile
+   return index;
+}
