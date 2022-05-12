@@ -23,6 +23,8 @@ Game::Game(){
     this->player2 = new Player("Player2");
     currentPlayer = player1;
     fillTileBag();
+    dealTiles(7);
+    main();
 }
 
 Game::Game(string player1Name, string player2Name){
@@ -30,6 +32,7 @@ Game::Game(string player1Name, string player2Name){
     this->player2 = new Player(player2Name);
     currentPlayer = player1;
     fillTileBag();
+    dealTiles(7);
     main();
 }
 
@@ -40,17 +43,53 @@ Game::~Game(){
     player2 = nullptr;
 }
 
-void Game::placeTile(Player* player, Tile* tile, string pos){
-    // Derives the integer x value buy substracting the ascii value 
-    // of 'A' from the character in the pos string
-    tile->posX = pos[0]-65; 
-    tile->posY = stoi(pos.substr(1, pos.size()-1));
-    // Removing the tile from the player's hand
-    player->hand.pop(player->hand.index(tile), tile);
-    // Placing the tile on the board
-    board.placeTile(tile, tile->posX, tile->posY);
-    delete tile;
-    board.printBoard();
+bool Game::replaceTile(Player* player, String letter){
+    bool replacementValid = false;
+    // Removing tile from player's hand
+    int tileIndex = player->hand.index(letter);
+    if (tileIndex != -1){
+        if (tileBag.size() > 0){
+            replacementValid = true;
+            player->hand.pop(tileIndex);
+            // Getting a random tile from tile bag
+            Tile* tile;
+    
+            tileBag.pop(std::rand() % tileBag.size(), tile);
+            // Adding tile to hand
+            player->hand.append(tile); 
+
+            // Print the player's new hand
+            cout << endl << "Your new hand:" << endl;
+            currentPlayer->hand.sort();
+            currentPlayer->hand.printTiles2();
+
+        }
+    }
+    return replacementValid;
+}
+
+bool Game::placeTile(Player* player, String letter, string pos){
+    bool placementValid = false;
+    // Get Tile from players hand   
+    int tileIndex = player->hand.index(letter);
+    if (tileIndex != -1){
+        // Removing the tile from the player's hand
+        Tile* tile;
+        player->hand.pop(player->hand.index(letter), tile);
+
+        // Derives the integer x value buy substracting the ascii value 
+        // of 'A' from the character in the pos string
+        tile->posX = pos[0]-65; 
+        tile->posY = stoi(pos.substr(1, pos.size()-1));
+
+        // Flag to indicate if the placement succeeded
+        // Placing the tile on the board
+        placementValid = board.placeTile(tile, tile->posX, tile->posY);
+        delete tile;
+    }
+
+    
+    return placementValid;
 }   
 
 // Reads the tiles from tile set file and populates
@@ -86,117 +125,157 @@ void Game::fillTileBag(){
     }
 }
 
-// Deals each player enough random tiles from the tile bag to result in them having 7 tiles total
+// Deals each player a given number of tiles
 void Game::dealTiles(int numTiles){
-        for (int i = 0; i < numTiles; i++){
-            Tile* tile1; 
-            tileBag.pop(std::rand() % tileBag.size(), tile1);
-            Tile* tile2; 
-            tileBag.pop(std::rand() % tileBag.size(), tile2);
-            player1->hand.insert(tile1->data, -1);
-            player2->hand.insert(tile2->data, -1);
-            delete tile1;
-            delete tile2;
-        }
-        //player1->hand.printTiles();
+    // For each tile to be dealt
+    for (int i = 0; i < numTiles; i++){
+        // Pop two random tiles from the tile bag
+        Tile* tile1; 
+        tileBag.pop(std::rand() % tileBag.size(), tile1);
+        Tile* tile2; 
+        tileBag.pop(std::rand() % tileBag.size(), tile2);
+
+        // Insert them into the players hands
+        player1->hand.insert(tile1->data, -1);
+        player2->hand.insert(tile2->data, -1);
+
+        // Clean up the transfer pointers
+        delete tile1;
+        delete tile2;
     }
+}
 
-    void Game::main(){
-        while (player1->hand.size() != 0 && player2->hand.size() != 0){
-            // Printing current player and player scores
-            cout << currentPlayer.name << ", it's your turn" <<endl;
-            cout << "Score for " << player1.name << ": " << player1.score << endl;
-            cout << "Score for " << player2.name << ": " << player2.score << endl<<endl;
-            board.printBoard();
-            cout<<endl;
-
-            // Current player's hand
-            cout << "Your hand is" << endl;
-            currentPlayer->hand.printTiles2();
-            cout << endl;
-
-            // Current player's turn
-
-            // Recieving inital command
-            String playerMove = "";
-            // While the users input is valid
-            bool inputValid = true;
-            while (inputValid ==true){
-                cout << "> ";
-                cin >> playerMove;
-                // Checking for 'place' move
-                if (playerMove.substr(0, 4) == "place"){
-                    while (playerMove != "Place Done"){
-                        try {
-                            placeTile(
-                                currentPlayer, currentPlayer->hand.index(playerMove[6]),
-                                playerMove.substr(11, 12))
-                            }
-                        }
-                        catch (...){
-                            
-                        }
-                    }
-                }
-                // Checking for replace move
-                else if (playerMove.substr(0, 6) == "replace"){
-
-                }
-                cout << endl;
-            }
-        }
+// Deals the specified player a given number of tiles
+void Game::dealTiles(int numTiles, Player* player){
+    // For each tile to be dealt
+    for (int i = 0; i < numTiles; i++){
+        // Pop a random tile from the tile bag
+        Tile* tile; 
+        tileBag.pop(std::rand() % tileBag.size(), tile);
+        currentPlayer->hand.insert(tile->data, -1);
+        delete tile;
     }
+}
 
-    void Game::getPlayerMove(){
+void Game::switchCurrentPlayer(){
+    // If the current player is player1 set the current player
+    // to player2
+    if (currentPlayer == player1){
+        currentPlayer = player2;
+    }
+    // Otherwise set the current player to player1
+    else{
+        currentPlayer = player1;
+    }
+}
+
+void Game::main(){
+    // Each iteration of this loop represents a turn
+    while (player1->hand.size() != 0 && player2->hand.size() != 0){
+        // print game info at the start of a turn
+        printGameInfo();
+
+        // Process the player's move from input
+        getPlayerMove();
+
+        // Switch the players for the next turn
+        switchCurrentPlayer();
+    }
+}
+
+void Game::getPlayerMove(){
+    // String containing player's move
+    String playerMove = "";
+
+    // While the users input is valid
+    bool inputValid = false;
+    while (inputValid == false){
+        // Recieivng input
+        cout << "> ";
+        std::getline(std::cin, playerMove);
+
+        // Checking for placement
+    
+        if (playerMove.substr(0, 5) == "Place"){
+            // Recieving player's word placement
+            place(playerMove);
+            inputValid = true;
+        }
+        // Checking for replacement
+        else if (playerMove.substr(0, 7) == "Replace"){
+            // Extracting tile letter from command string
+            String letter(1, playerMove[8]);
+            replaceTile(currentPlayer, letter);
+            inputValid = true;
+        }
+
+        // Checking for pass
+        else if (playerMove == "pass"){
+            inputValid = true;
+        }
+
+    }
+    cout << endl;
+}
+
+
+void Game::printGameInfo(){
+    // Printing current player and player scores
+    cout << currentPlayer->name << ", it's your turn" <<endl;
+    cout << "Score for " << player1->name << ": " << player1->score << endl;
+    cout << "Score for " << player2->name << ": " << player2->score << endl<<endl;
+    board.printBoard();
+    cout<<endl;
+
+    // Current player's hand
+    cout << "Your hand is" << endl;
+    currentPlayer->hand.sort();
+    currentPlayer->hand.printTiles2();
+    cout << endl;
+}
+
+
+void Game::place(String playerMove){
+    int tilesPlaced = 0;
+    // // while the move has not been finished
+    while (playerMove != "Place Done"){
         bool inputValid = false;
-        while (inputValid == true){
-            // Recieving inital command
-            String playerMove = "";
-            cout << "> ";
-            cin >> playerMove;
 
-/ 
-            cout << playerMove.substr(0, 4) << endl;
-            if (playerMove.substr(0, 4) == "place"){
-                cout << playerMove.substr(8, 9) << endl;
-                if (playerMove.substr(8, 9) == "at"){
-                    // TODO 
-                    // - Check if tile is players hand
-                    // - Check if placement is free
-                    // - Loop until placement is complete
-                }
-            }
-            else if (playerMove.substr(0, 6) == "replace"){
+        // Check that the length of the arguments is valid
+        if (playerMove.size() == MIN_PLACE_ARG_LENGTH || playerMove.size() == MIN_PLACE_ARG_LENGTH){
+            // Check that arguments follow the correct syntax
+            if (playerMove.substr(8, 2) == "at"){
 
-            }
-            else if (playerMove.substr(0, 3) == "pass"){
-                validInput = true;
-            }
-        }
+                // Check that the specified letter is in the player's hand
+                String commandLetter(1, playerMove[6]);
+                int indexOfTile = currentPlayer->hand.index(commandLetter);
+                if (indexOfTile != -1){
 
-
-        while (inputValid ==true){
-            cout << "> ";
-            cin >> playerMove;
-            // Checking for 'place' move
-            try {
-                if (playerMove.substr(0, 4) == "place"){
-                    while (playerMove != "Place Done"){
-                        placeTile(
-                            currentPlayer, currentPlayer->hand.index(playerMove[6]),
-                            playerMove.substr(11, 12))
-                        }
-                        
-            
+                    // Place the specified tile at the position specied at index 11
+                    // if the placement succeeds, the input is valid.
+                    if (placeTile(currentPlayer, commandLetter, playerMove.substr(11, 3)) == true){
+                        inputValid = true;
+                        // Forcing player to follow through with place move
+                        cout << "> Place ";
+                        std::getline(std::cin, playerMove);
+                        // Adding place to the beginning of player command
+                        playerMove = "Place " + playerMove;
+                        tilesPlaced++;
                     }
                 }
-                // Checking for replace move
-                else if (playerMove.substr(0, 6) == "replace"){
-
-                }
+            }
         }
-        catch (...)
-            cout << endl;
+
+        // Input was invalid
+        if (inputValid == false) {
+            cout << "Invalid Input" << endl;
+            // Forcing player to follow through with place move
+            cout << "> Place ";
+            std::getline(std::cin, playerMove);
+            // Adding place to the beginning of player command
+            playerMove = "Place " + playerMove;
+            cout << "Player Move: " << playerMove << endl;
         }
     }
 }
+
