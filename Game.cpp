@@ -104,7 +104,7 @@ void Game::dealTiles(int numTiles){
 }
 
 void Game::saveGame(Player player1, Player player2, String currentPlayer, String tileBag,  Board boardSave){
-    String fileName = player1.name + player2.name + ".txt";
+    String fileName = player1.name + "-VS-" + player2.name + ".txt";
     String player1hand;
     String player2hand;
     array <string, 15> boardLine;
@@ -122,9 +122,9 @@ void Game::saveGame(Player player1, Player player2, String currentPlayer, String
     saveFile << player2.name << endl;
     saveFile << player2.score << endl;
 
-    while(player1.hand.size() > 0){
-        player1hand += player1.hand.get(0)->letter;
-        player1.hand.pop(0);
+    while(player2.hand.size() > 0){
+        player2hand += player2.hand.get(0)->letter;
+        player2.hand.pop(0);
     }
 
     saveFile << currentPlayer << endl;
@@ -133,8 +133,8 @@ void Game::saveGame(Player player1, Player player2, String currentPlayer, String
     // write the board state to game file
     //fix magic number
 
-    for(int n = 0; n <= boardTiles.size(); n++){
-                saveFile << boardTiles.get(n);
+    for(int i = 0; i <= boardTiles.size(); i++){
+                saveFile << boardTiles.get(i);
     }
 }
 
@@ -152,42 +152,70 @@ void Game::loadGame(String fileName){
     // Board state
 
     // Create a text string, which is used to output the text file
-    // string gameSave;
-    // int boardSize = 15;
-    // vector<string> info;
-    // vector<string> line;
-    // TileList* boardList = new TileList();
+    string gameSave;
+    int boardSize = 15;
+    vector<string> info;
+    vector<string> line;
+    TileList boardList = TileList();
 
-    // // Read from the text file
-    // std::ifstream ReadFile(fileName);
+    // Read from the text file
+    std::ifstream ReadFile(fileName);
 
-    // // Use a while loop together with the getline() function to read the file line by line
-    // while (std::getline (ReadFile, gameSave)) {
-    //     info.push_back(gameSave);
-    // }
+    // Use a while loop together with the getline() function to read the file line by line
+    while (std::getline (ReadFile, gameSave)) {
+        info.push_back(gameSave);
+    }
     // set the variables based on each line from the file
-    // String player1Name = info.at(0);
-    // int player1Score = stoi(info.at(1));
-    // String player1Hand = info.at(2);
+    String player1Name = info.at(0);
+    int player1Score = stoi(info.at(1));
+    String player1HandString = info.at(2);
 
-    // String player2Name = info.at(3);
-    // int player2Score = stoi(info.at(4));
-    // String player2Hand = info.at(5);
+    String player2Name = info.at(3);
+    int player2Score = stoi(info.at(4));
+    String player2HandString = info.at(5);
 
-    // String currentPlayer = info.at(6);
-    // String tileBagState = info.at(7);
+    String currentPlayerName = info.at(6);
+    Player* currentPlayer = new Player(currentPlayerName);
 
-    // line.push_back(info.at(8));
+    TileList player1Hand = TileList();
+    for(int i = 0; i <= (int)player1HandString.length(); i++){
+        String tileLetter(1, player1HandString.at(i));
+        tuple<string, int> data = make_tuple(tileLetter, getValue(tileLetter));
+        player1Hand.append(data);
+    }
+
+    TileList player2Hand = TileList();
+    for(int i = 0; i <= (int)player2HandString.length(); i++){
+        String tileLetter(1, player2HandString.at(i));
+        tuple<string, int> data = make_tuple(tileLetter, getValue(tileLetter));
+        player2Hand.append(data);
+    }
+
+    String tileBagState = info.at(7);
+    TileList tileBag = TileList();
+    for(int i = 0; i <= (int)tileBagState.length(); i++){
+        String tileLetter(1, tileBagState.at(i));
+        tuple<string, int> data = make_tuple(tileLetter, getValue(tileLetter));
+        player1Hand.append(data);
+    }
+
+    line.push_back(info.at(8));
 
 
-    // for(int j = 0; j <= boardSize; j++){
-    //     Tile* tile = new Tile(line.at(j), getValue(line.at(j)));
-    //     boardList->append(tile);
-    // }
+    for(int i = 0; i <= boardSize; i++){
+        Tile *tile = new Tile(line.at(i), getValue(line.at(i)));
+        boardList.append(tile);
+    }
 
-
-
-    //Need To Initiate a new game here
+    // Now create a game and set the variable to what we have read from the file
+    Game* game = new Game(player1Name, player2Name);
+    game->currentPlayer = currentPlayer;
+    game->player1->score = player1Score;
+    game->player2->score = player2Score;
+    game->player1->hand = player1Hand;
+    game->player2->hand = player2Hand;
+    game->board.tiles = boardList;
+    game->tileBag = tileBag;
     }
 
 int Game::getValue(String letter){

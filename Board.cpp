@@ -31,6 +31,10 @@ bool Board::placeTile(Tile* tile, int row, int col){
     return placementSuccess;
 }
 
+TileList Board::getTiles(){
+    return tiles;
+}
+
 void Board::printBoard(){
     array<string, 15> rows = 
     {"A", "B", "C", "D", "E", "F","G", "H", "I", "J", "K", "L", "M", "N", "O"};

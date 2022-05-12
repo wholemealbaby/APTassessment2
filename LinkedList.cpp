@@ -374,7 +374,7 @@ void LinkedList::pop(int index, Node*& returnPtr){
    returnPtr = new Node(targetPtr, nullptr, nullptr);
    delete targetPtr;
    length--;
-}
+
 
    else {
       returnPointer = (*this)[index];

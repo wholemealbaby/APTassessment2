@@ -4,7 +4,8 @@
 #include <string>
 #include <iostream>
 #include <array>
-#include "arrayFunctions.cpp"
+//#include "arrayFunctions.cpp"
+#include "Game.h"
 
 
 using std::string;
@@ -57,8 +58,7 @@ class MainMenu{
 
     void newGame(){
         cout<<"Creating New Game"<<endl;
-        return;
-        
+        Game newGame = Game();        
     }
 
     void loadGame(){
