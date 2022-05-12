@@ -57,8 +57,18 @@ class MainMenu{
     }
 
     void newGame(){
+        String p1name;
+        String p2name;
         cout<<"Creating New Game"<<endl;
-        Game newGame = Game();        
+        cout<<"Player 1 name:"<<endl;
+        cin >> p1name;
+        cout<<"Player 2 name:"<<endl;
+        cin >> p2name;
+
+        Game newGame = Game(p1name, p2name);
+        newGame.dealTiles((7 - newGame.player1->hand.size()), newGame.player1);
+        newGame.dealTiles((7 - newGame.player2->hand.size()), newGame.player2);        
+        
     }
 
     void loadGame(){

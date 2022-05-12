@@ -89,17 +89,13 @@ void Game::fillTileBag(){
     }
 }
 
-// Deals each player enough random tiles from the tile bag to result in them having 7 tiles total
-void Game::dealTiles(int numTiles){
+// Deals a player enough random tiles from the tile bag to result in them having 7 tiles total
+void Game::dealTiles(int numTiles, Player *player){
     for (int i = 0; i < numTiles; i++){
-        Tile* tile1; 
-        tileBag.pop(std::rand() % tileBag.size(), tile1);
-        Tile* tile2; 
-        tileBag.pop(std::rand() % tileBag.size(), tile2);
-        player1->hand.insert(tile1->data, -1);
-        player2->hand.insert(tile2->data, -1);
-        delete tile1;
-        delete tile2;
+        Tile* tile; 
+        tileBag.pop(std::rand() % tileBag.size(), tile);
+        player->hand.insert(tile->data, -1);
+        delete tile;
     }
 }
 

@@ -30,7 +30,7 @@ class Game {
     void passTurn(Player* player);
 
     // Deals each player a defined number of random tiles from the tile bag
-    void dealTiles(int numTiles);
+    void dealTiles(int numTiles, Player *player);
 
     void saveGame(Player player1, Player player2, String currentPlayer, String tileBag, Board boardState);
 
