@@ -103,11 +103,14 @@ void Game::dealTiles(int numTiles){
     }
 }
 
-void Game::saveGame(Player player1, Player player2, String currentPlayer, String tileBag, String[] boardState){
+void Game::saveGame(Player player1, Player player2, String currentPlayer, String tileBag,  Board boardSave){
     String fileName = player1.name + player2.name + ".txt";
     String player1hand;
     String player2hand;
+    array <string, 15> boardLine;
+    
     ofstream saveFile (fileName);
+    TileList boardTiles = boardSave.getTiles();
     saveFile << player1.name << endl;
     saveFile << player1.score << endl;
 
@@ -126,19 +129,15 @@ void Game::saveGame(Player player1, Player player2, String currentPlayer, String
 
     saveFile << currentPlayer << endl;
     saveFile << tileBag << endl;
+    
+    // write the board state to game file
+    //fix magic number
 
-    for(int i = 0;i <= bo)
-
-    //to do
-
-    //Tile Bag
-    //Board state
-
-
-
-
-
+    for(int n = 0; n <= boardTiles.size(); n++){
+                saveFile << boardTiles.get(n);
+    }
 }
+
 void Game::loadGame(String fileName){
     // The save file is as follows, line-by-line.
 
@@ -153,47 +152,49 @@ void Game::loadGame(String fileName){
     // Board state
 
     // Create a text string, which is used to output the text file
-    string gameSave;
-    int boardSize = 15;
-    vector<string> info;
-    vector<string> line;
-    TileList* boardList = new TileList();
+    // string gameSave;
+    // int boardSize = 15;
+    // vector<string> info;
+    // vector<string> line;
+    // TileList* boardList = new TileList();
 
-    // Read from the text file
-    std::ifstream ReadFile(fileName);
+    // // Read from the text file
+    // std::ifstream ReadFile(fileName);
 
-    // Use a while loop together with the getline() function to read the file line by line
-    while (std::getline (ReadFile, gameSave)) {
-        info.push_back(gameSave);
-    }
+    // // Use a while loop together with the getline() function to read the file line by line
+    // while (std::getline (ReadFile, gameSave)) {
+    //     info.push_back(gameSave);
+    // }
     // set the variables based on each line from the file
-    String player1Name = info.at(0);
-    int player1Score = stoi(info.at(1));
-    String player1Hand = info.at(2);
+    // String player1Name = info.at(0);
+    // int player1Score = stoi(info.at(1));
+    // String player1Hand = info.at(2);
 
-    String player2Name = info.at(3);
-    int player2Score = stoi(info.at(4));
-    String player2Hand = info.at(5);
+    // String player2Name = info.at(3);
+    // int player2Score = stoi(info.at(4));
+    // String player2Hand = info.at(5);
 
-    String currentPlayer = info.at(6);
-    String tileBagState = info.at(7);
+    // String currentPlayer = info.at(6);
+    // String tileBagState = info.at(7);
+
+    // line.push_back(info.at(8));
 
 
-    for(int i = 8; i <= boardSize + 8; i++){
-        line.push_back(info.at(i));
-        for(int j = 0; j <= boardSize; j++){
-            Tile* tile = new Tile(line.at(j), getValue(line.at(j)));
-            boardList->append(tile);
-        }
-    }
+    // for(int j = 0; j <= boardSize; j++){
+    //     Tile* tile = new Tile(line.at(j), getValue(line.at(j)));
+    //     boardList->append(tile);
+    // }
+
 
 
     //Need To Initiate a new game here
     }
 
 int Game::getValue(String letter){
+    // returns the score of a given letter
     const char* cha = letter.c_str();
-    int letterNum = (int) cha - 65;
+    // atoi converts char to int precisely
+    int letterNum = atoi(cha) - 65;
         
         switch(letterNum) {
         case 0: return 1;
@@ -222,7 +223,7 @@ int Game::getValue(String letter){
         case 23: return 8;
         case 24: return 4;
         case 25: return 10;
-            
+        default: return -1;    
         }
     }
 

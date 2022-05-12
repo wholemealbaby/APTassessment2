@@ -26,13 +26,15 @@ class Board {
 
     TileList getTiles();
 
-    private:
-    static int board_length;
     // Tiles that are current placed on the board
     TileList tiles;
 
     // Positions on the board that do not have a tile on them
     array<array<String, 15>, 15> boardState;
+    
+    private:
+    static int board_length;
+    
 };
 
 #endif // ASSIGN2_NODE_

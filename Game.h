@@ -32,7 +32,7 @@ class Game {
     // Deals each player a defined number of random tiles from the tile bag
     void dealTiles(int numTiles);
 
-    void saveGame(Player player1, Player player2, String currentPlayer, String tileBag, String boardState);
+    void saveGame(Player player1, Player player2, String currentPlayer, String tileBag, Board boardState);
 
 
     void loadGame(String fileName);
