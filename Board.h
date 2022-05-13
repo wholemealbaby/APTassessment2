@@ -29,6 +29,8 @@ class Board {
     // Tiles that are current placed on the board
     TileList tiles;
 
+    // Represents the board and letters on it.
+    // Used to identify if a position is free.
     // Positions on the board that do not have a tile on them
     array<array<String, 15>, 15> boardState;
     

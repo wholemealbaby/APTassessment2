@@ -2,10 +2,10 @@
 #include <string>
 #include <array>
 
-//#include "LinkedList.h"
-//#include "Node.h"
-#include "Tile.h"
-#include "MainMenu.cpp"
+#include "Player.h"
+#include "Board.h"
+#include "MainMenu.h"
+#include "Game.h"
 
 using std::cin; 
 using std::cout;
@@ -20,12 +20,8 @@ int main(void) {
    cout<<"Welcome to Scrabble!"<<endl;
    cout<<"--------------------"<<endl<<endl;
 
-   MainMenu menu;
+   Game game;
 
-   // LinkedList list;
-   // list.append("pirrhannas");
-   // list.append("bears");
-   // list.append("cockraoches");
 
 
    return EXIT_SUCCESS;

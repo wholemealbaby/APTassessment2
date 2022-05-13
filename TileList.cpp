@@ -83,6 +83,14 @@ Tile* TileList::search(string letter){
          currentTile = currentTile->next;
       }
    }
+
+   if (found == false){
+      currentTile = nullptr;
+   }
+
+   else {
+      currentTile = new Tile(currentTile, nullptr, nullptr);
+   }
    return currentTile;
 }
 
@@ -140,6 +148,7 @@ void TileList::append(Tile* incomingTile){;
       tail->prev->next = tail;
    }
    length++;
+   
 }
 
 // Inserts a Tile at the given index
@@ -175,18 +184,20 @@ void TileList::insert(tuple<string, int> incomingTileData, int index){
    length++;
 }
 
+
 // Print all the tiles in the list
-void TileList::printTiles(){
+void TileList::printTiles2(){
    if (head == nullptr){
       cout<< "The list is empty" << endl;
    }
 
    else{
       Tile* currentTile = head;
-      while (currentTile != nullptr){
-         cout << currentTile->letter << currentTile->value << endl;
+      while (currentTile->next != nullptr){
+         cout << currentTile->letter << "-" << currentTile->value << ", ";
          currentTile = currentTile->next;
       }
+      cout << currentTile->letter << "-" << currentTile->value << endl;
       currentTile = nullptr;
    }
 }
@@ -261,7 +272,7 @@ void TileList::pop(int index){
    }
    
    // End case
-   else if (index == -1){
+   else if (index == -1 || index == length-1){
       // Returning the tail
       targetPtr = tail;
       // Setting the tail to the previous value;
@@ -307,7 +318,7 @@ void TileList::pop(int index, Tile*& returnPtr){
    }
    
    // End case
-   else if (index == -1){
+   else if (index == -1 || index == length-1){
       // Returning the tail
       targetPtr = tail;
       // Setting the tail to the previous value;
