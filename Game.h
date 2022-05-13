@@ -9,7 +9,7 @@
 #include <iostream>
 
 #define MIN_PLACE_ARG_LENGTH    13
-#define MAXs_PLACE_ARG_LENGTH   14
+#define MAX_PLACE_ARG_LENGTH   14
 
 using std::string;
 

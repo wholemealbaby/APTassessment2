@@ -63,6 +63,13 @@ bool Game::replaceTile(Player* player, String letter){
             currentPlayer->hand.sort();
             currentPlayer->hand.printTiles2();
 
+            // Giving the player the chance to read their new
+            // hand by waiting for user to press enter 
+            // before continuing
+            do {
+            cout << '\n' << "Press Enter to continue...";
+            } while (cin.get() != '\n');
+
         }
     }
     return replacementValid;
@@ -80,11 +87,14 @@ bool Game::placeTile(Player* player, String letter, string pos){
         // Derives the integer x value buy substracting the ascii value 
         // of 'A' from the character in the pos string
         tile->posX = pos[0]-65; 
-        tile->posY = stoi(pos.substr(1, pos.size()-1));
+        tile->posY = stoi(pos.substr(1, 3));
 
         // Flag to indicate if the placement succeeded
         // Placing the tile on the board
         placementValid = board.placeTile(tile, tile->posX, tile->posY);
+        if (placementValid == true){
+            currentPlayer->score = currentPlayer->score + tile->value;
+        }
         delete tile;
     }
 
@@ -214,6 +224,12 @@ void Game::getPlayerMove(){
             inputValid = true;
         }
 
+        // Checking for EOF
+        else if (cin.eof()){
+            cout << endl << "Goodbye!" << endl;
+            exit(0);
+        }
+
     }
     cout << endl;
 }
@@ -241,8 +257,14 @@ void Game::place(String playerMove){
     while (playerMove != "Place Done"){
         bool inputValid = false;
 
+        // Checking for EOF
+        if (cin.eof()){
+            cout << endl << "Goodbye!" << endl;
+            exit(0);
+        }
+
         // Check that the length of the arguments is valid
-        if (playerMove.size() == MIN_PLACE_ARG_LENGTH || playerMove.size() == MIN_PLACE_ARG_LENGTH){
+        if (playerMove.size() == MIN_PLACE_ARG_LENGTH || playerMove.size() == MAX_PLACE_ARG_LENGTH){
             // Check that arguments follow the correct syntax
             if (playerMove.substr(8, 2) == "at"){
 
@@ -274,7 +296,6 @@ void Game::place(String playerMove){
             std::getline(std::cin, playerMove);
             // Adding place to the beginning of player command
             playerMove = "Place " + playerMove;
-            cout << "Player Move: " << playerMove << endl;
         }
     }
 }

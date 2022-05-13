@@ -83,6 +83,14 @@ Tile* TileList::search(string letter){
          currentTile = currentTile->next;
       }
    }
+
+   if (found == false){
+      currentTile = nullptr;
+   }
+
+   else {
+      currentTile = new Tile(currentTile, nullptr, nullptr);
+   }
    return currentTile;
 }
 
@@ -140,6 +148,7 @@ void TileList::append(Tile* incomingTile){;
       tail->prev->next = tail;
    }
    length++;
+   
 }
 
 // Inserts a Tile at the given index
@@ -263,7 +272,7 @@ void TileList::pop(int index){
    }
    
    // End case
-   else if (index == -1){
+   else if (index == -1 || index == length-1){
       // Returning the tail
       targetPtr = tail;
       // Setting the tail to the previous value;
@@ -309,7 +318,7 @@ void TileList::pop(int index, Tile*& returnPtr){
    }
    
    // End case
-   else if (index == -1){
+   else if (index == -1 || index == length-1){
       // Returning the tail
       targetPtr = tail;
       // Setting the tail to the previous value;
