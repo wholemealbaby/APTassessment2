@@ -4,7 +4,7 @@
 
 #include "Player.h"
 #include "Board.h"
-#include "MainMenu.cpp"
+#include "MainMenu.h"
 #include "Game.h"
 
 using std::cin; 
@@ -22,8 +22,6 @@ int main(void) {
 
    Game game;
 
-   game.dealTiles(7);
-   game.placeTile(game.currentPlayer, game.currentPlayer->hand[0], "C1");
 
 
    return EXIT_SUCCESS;
