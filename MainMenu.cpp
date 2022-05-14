@@ -4,7 +4,7 @@
 #include <string>
 #include <iostream>
 #include <array>
-#include "main"
+#include "MainMenu.h"
 #include "arrayFunctions.cpp"
 #include "Player.h"
 #include "Game.h"
@@ -33,7 +33,7 @@ MainMenu::MainMenu(){
     cin>>userInput;
 
     // Checking for EOF
-    else if (cin.eof()){
+    if (cin.eof()){
         cout << endl << "Goodbye!" << endl;
         exit(0);
     }
@@ -43,7 +43,7 @@ MainMenu::MainMenu(){
         cin>>userInput;
 
         // Checking for EOF
-        else if (cin.eof()){
+        if (cin.eof()){
             cout << endl << "Goodbye!" << endl;
             exit(0);
         }
@@ -71,7 +71,7 @@ void MainMenu::newGame(){
     array<String, 2> usernames;
     String username;
 
-    for (int repeat = 0; repeat < 2; repeat++){
+    for (int repeat = 1; repeat <= 2; repeat++){
         cout << "Enter a name for player ";
         cout << repeat;
         cout << " (uppercase characters only)" << endl;
@@ -79,13 +79,13 @@ void MainMenu::newGame(){
         cin >> username;
 
         // Checking for EOF
-        else if (cin.eof()){
+       if (cin.eof()){
             cout << endl << "Goodbye!" << endl;
             exit(0);
         }
 
         cout<<endl<<endl;
-        usernames.at(repeat) = username;
+        usernames.at(repeat-1) = username;
     }
     cout << "Let's Play!" << endl << endl;
 

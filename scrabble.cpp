@@ -20,7 +20,7 @@ int main(void) {
    cout<<"Welcome to Scrabble!"<<endl;
    cout<<"--------------------"<<endl<<endl;
 
-   Game game;
+   MainMenu menu;
 
 
 
