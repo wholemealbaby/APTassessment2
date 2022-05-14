@@ -60,7 +60,8 @@ bool Game::replaceTile(Player* player, String letter){
     
             tileBag.pop(std::rand() % tileBag.size(), tile);
             // Adding tile to hand
-            player->hand.append(tile); 
+            player->hand.append(tile);
+            delete tile;
 
             // Print the player's new hand
             cout << endl << "Your new hand:" << endl;
@@ -395,6 +396,11 @@ void Game::getPlayerMove(){
             exit(0);
         }
 
+        // Printing invalid input if the input is still invalid
+        if (inputValid == false){
+            cout << "Invalid Input"<< endl;
+        }
+
     }
     cout << endl;
 }
@@ -447,7 +453,7 @@ void Game::place(String playerMove){
                         // checking to see if the player has placed
                         // their entire hand
                         if (tilesPlaced == 6){
-                            
+
                             // Performing bingo special operation
                             cout << endl << "BINGO!!!" << endl<< endl;;
                             
