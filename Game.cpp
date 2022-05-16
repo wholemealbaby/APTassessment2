@@ -11,8 +11,10 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <cmath>
 
 #define PLAYER_HAND_SIZE 7
+
 
 using std::string;
 using std::tuple;
@@ -24,6 +26,7 @@ using std::make_tuple;
 using std::stoi;
 using std::ifstream;
 using std::ofstream;
+using std::abs;
 
 Game::Game(){
     this->player1 = new Player("Player1");
@@ -31,6 +34,7 @@ Game::Game(){
     currentPlayer = player1;
     fillTileBag();
     dealTiles(PLAYER_HAND_SIZE);
+    cout << "Please make your first move across H7" << endl;
     main();
 }
 
@@ -41,6 +45,7 @@ Game::Game(string player1Name, string player2Name){
     currentPlayer = player1;
     fillTileBag();
     dealTiles(PLAYER_HAND_SIZE);
+    cout << "Please make your first move across H7" << endl;
     main();
 }
 
@@ -417,12 +422,24 @@ void Game::printGameInfo(){
 
 void Game::place(String playerMove){
 
+    // back up boardState and playerHand in case move is illegal
+    backupHand.copy(&currentPlayer->hand);
     int tilesPlaced = 0;
+    backupBoard = board;
+
+    int posX1;
+    int posY1;
+    int posX2;
+    int posY2;
+//    int a;
+//    int b;
+    string pos;
+    string prevPos;
+    int chances = 0;
 
     // // while the move has not been finished
     while (playerMove != "Place Done"){
         bool inputValid = false;
-
         // Checking for EOF
         if (cin.eof()){
             cout << endl << "Goodbye!" << endl;
@@ -439,10 +456,54 @@ void Game::place(String playerMove){
                 int indexOfTile = currentPlayer->hand.index(commandLetter);
                 if (indexOfTile != -1){
 
+                    if(tilesPlaced > 0)
+                        prevPos = pos;
+
+                    // pos is the coordinates of the move
+                    pos = playerMove.substr(11, 3);
+
+
+                    // get coords of move and coords of move
+                    posX1 = pos[0] - 65;
+                    posY1 = stoi(pos.substr(1, 3));
+
+
+
+                    if(tilesPlaced > 0) {
+
+                        // get coords of move and coords of prev move
+
+                        posX2 = prevPos[0] - 65;
+                        posY2 = stoi(prevPos.substr(1, 3));
+
+                        if (!isStraight(posX1, posY1, posX2, posY2)) {
+                            cout << "Please place your tiles in a straight line. Try again." << endl;
+                            resetMove();
+                        }
+//                        if(isVertical(posX1, posY1, posX2, posY2)) {
+//                            a = posY1;
+//                            b = posY2;
+//                        }
+//                        if(!isVertical(posX1, posY1, posX2, posY2)) {
+//                            a = posX1;
+//                            b = posX2;
+//                        }
+//                        if (!isConsecutive(a, b)) {
+//                            cout << "Please place your tiles consecutively. Try again." << endl;
+//                            resetMove();
+//                        }
+                        if (isAdjacent(posX1, posY1)) {
+                            chances++;
+                        }
+                    }
+
                     // Place the specified tile at the position specied at index 11
                     // if the placement succeeds, the input is valid.
-                    if (placeTile(currentPlayer, commandLetter, playerMove.substr(11, 3)) == true){
+                    if (placeTile(currentPlayer, commandLetter, pos) == true){
                         inputValid = true;
+
+                        // Derives the integer x value buy substracting the ascii value
+                        // of 'A' from the character in the pos string
 
                         // checking to see if the player has placed
                         // their entire hand
@@ -486,9 +547,52 @@ void Game::place(String playerMove){
             playerMove = "Place " + playerMove;
         }
     }
+    if(chances < 1){
+        cout << "please intersect with a word" << endl;
+        resetMove();
+    }
+
 
     if (currentPlayer->hand.size() < PLAYER_HAND_SIZE){
         dealTiles(PLAYER_HAND_SIZE - currentPlayer->hand.size(), currentPlayer);
     }
+}
+bool Game::isStraight(int x1, int y1, int x2, int y2) {
+    if((x1 == x2) || (y1 == y2))
+        return true;
+    return false;
+}
+
+bool Game::isVertical(int x1, int y1, int x2, int y2){
+    if(x1 == x2)
+        return true;
+    return false;
+}
+
+//bool Game::isConsecutive(int a, int b){
+//    if((a == (b + 1)) || (a == (b - 1)))
+//        return true;
+//    return false;
+//
+//}
+
+void Game::resetMove(){
+    currentPlayer->hand.copy(&backupHand);
+    board = backupBoard;
+    getPlayerMove();
+}
+
+bool Game::isAdjacent(int x, int y) {
+    if((x == 7) && (y == 7))
+        return true;
+    if((x < 13) && backupBoard.boardState[x + 1][y] != " ")
+        return true;
+    if((x > 1) && backupBoard.boardState[x - 1][y] != " ")
+        return true;
+    if((y < 13) && backupBoard.boardState[x][y + 1] != " ")
+        return true;
+    if((y > 1) && backupBoard.boardState[x][y - 1] != " ")
+        return true;
+    return false;
 }
 

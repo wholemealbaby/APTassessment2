@@ -14,7 +14,7 @@ Tile::Tile(tuple<string, int> data){
     posY = -1;
     next = nullptr;
     prev = nullptr;
-    branchable = false;
+
 }
 
 Tile::Tile(tuple<string, int> data, Tile* prev, Tile* next){

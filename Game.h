@@ -33,8 +33,13 @@ class Game {
     // any validity checks
     void placeTile(Tile* tile, String pos);
 
+    //checks if the move is going down or right
+    bool isStraight(int x1, int y1, int x2, int y2);
+    bool isConsecutive(int a, int b);
+    bool isVertical(int x1, int y1, int x2, int y2);
 
-    // A player swaps a tile from their hand
+
+        // A player swaps a tile from their hand
     // with a random tile from the tile bag
     bool replaceTile(Player* player, String letter);
     
@@ -67,19 +72,24 @@ class Game {
     // Switches the currentPlayer
     void switchCurrentPlayer();
 
+    void resetMove();
+
     void saveGame(Player* player1, Player* player2, String currentPlayer, TileList tileBag, TileList boardTiles);
 
     void loadGame(String fileName);
 
-    bool ifBranchable(Tile tile);
+    bool isAdjacent(int x, int y);
+
 
     Player* player1;
     Player* player2;
     Player* currentPlayer;
     
     //private:
+    TileList backupHand;
     TileList tileBag;
     Board board;
+    Board backupBoard;
 };
 
 #endif // ASSIGN2_NODE_

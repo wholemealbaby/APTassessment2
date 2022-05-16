@@ -1,5 +1,6 @@
 #include "TileList.h"
 #include "Board.h"
+#include "Player.h"
 #include <array>
 #include <iostream>
 
@@ -19,21 +20,35 @@ int Board::board_length = 15;
 // Places a tile on the board and returns
 // a  truth value indicating the placement success
 bool Board::placeTile(Tile* tile, int row, int col){
-    bool placementSuccess = false;
+    string spot = boardState[row][col];
     // If the specified postion is empty
-    if (boardState[row][col] == " "){
-        boardState[row][col] = tile->letter;
-        tiles.append(tile);
-        placementSuccess = true;
-        tile->branchable = true;
-    }
+    if (tiles.size() != 0 && spot != " ")
+        return false;
 
-    return placementSuccess;
+    boardState[row][col] = tile->letter;
+    tiles.append(tile);
+
+    return true;
 }
 
 TileList Board::getTiles(){
     return tiles;
 }
+
+bool Board::validateBoard(){
+    return true;
+}
+
+void Board::startNewMoves(){
+    currMoves.clear();
+}
+
+bool Board::validateMoves() {
+    // first move
+
+
+}
+
 
 // String Board::checkAdjacentTiles(Tile tile){
 //     // int row = tile.posX;

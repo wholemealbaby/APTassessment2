@@ -204,17 +204,21 @@ void TileList::printTiles2(){
 
 // Deletes the contents of the list and copies the contents of the given list
 void TileList::copy(TileList* list){
-   // Clear this list
+    // Clear this list
    this->clear();
+   if(!list)
+       return;
+   if(list->size() == 0)
+       return;
    // Append the head of the given list
    append(list->getHead()->data);
    
    // Iterate through the given list starting at the head and appending 
    // each element to this list
    Tile* currentTile = list->getHead();
-   while (currentTile->next != nullptr){
-      append(currentTile->next->data);
-      currentTile = currentTile->next;
+   while (currentTile->next != nullptr) {
+       append(currentTile->next->data);
+       currentTile = currentTile->next;
    }
 }
 
