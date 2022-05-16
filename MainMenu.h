@@ -22,4 +22,7 @@ class MainMenu{
 
     // Shows developer student IDs
     void showCredits();
+
+    // Checks that the given username is all uppercase
+    bool validateUsername(string username);
 };

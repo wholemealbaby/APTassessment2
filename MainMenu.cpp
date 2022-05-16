@@ -4,11 +4,15 @@
 #include <string>
 #include <iostream>
 #include <array>
+#include <cctype>
+#include <clocale>
 #include "MainMenu.h"
 #include "arrayFunctions.cpp"
 #include "Player.h"
 #include "Game.h"
 #include "Board.h"
+
+#define NUM_PLAYERS 2
 
 
 using std::string;
@@ -16,6 +20,7 @@ using std::array;
 using std::cout;
 using std::cin;
 using std::endl;
+using std::isupper;
 
 
 
@@ -71,7 +76,8 @@ void MainMenu::newGame(){
     array<String, 2> usernames;
     String username;
 
-    for (int repeat = 1; repeat <= 2; repeat++){
+    int repeat = 1;
+    while (repeat <= NUM_PLAYERS){
         cout << "Enter a name for player ";
         cout << repeat;
         cout << " (uppercase characters only)" << endl;
@@ -84,11 +90,19 @@ void MainMenu::newGame(){
             exit(0);
         }
 
-        cout<<endl<<endl;
-        usernames.at(repeat-1) = username;
+        // Verifying that username is uppercase
+        else if (validateUsername(username) != true){
+            cout << "Invalid Input" << endl;
+        }
+
+        else {
+            cout<<endl<<endl;
+            cout << " made game" << endl;
+            usernames.at(repeat-1) = username;
+            repeat++;
+        }
     }
     cout << "Let's Play!" << endl << endl;
-
     Game game(usernames[0], usernames[1]);
     return;
 
@@ -112,6 +126,21 @@ void MainMenu::showCredits(){
     cout<<"Student ID: s3902024"<<endl;
     cout<<"Email: s3902024@student.rmit.edu.au"<<endl;
     cout<<"----------------------------------"<<endl;
+}
+
+// Checks that the given username is all uppercase
+bool MainMenu::validateUsername(String username){
+    // Current index in username
+    unsigned int index = 0;
+    // flag indicating whether or not a lowercase has been found
+    bool isUpper = true;
+    while (isUpper == true && index < username.length()){
+        if (isupper(username[index]) == false){
+            isUpper = false;
+        }
+        index++;
+    }
+    return isUpper;
 }
 
 #endif
