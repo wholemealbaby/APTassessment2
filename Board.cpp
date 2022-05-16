@@ -35,27 +35,6 @@ TileList Board::getTiles(){
     return tiles;
 }
 
-bool Board::validateBoard(){
-    return true;
-}
-
-void Board::startNewMoves(){
-    currMoves.clear();
-}
-
-bool Board::validateMoves() {
-    // first move
-
-
-}
-
-
-// String Board::checkAdjacentTiles(Tile tile){
-//     // int row = tile.posX;
-//     // int col = tile.posY;
-//     //if(tile.
- 
-// }
 
 void Board::printBoard(){
     array<string, 15> rows = 

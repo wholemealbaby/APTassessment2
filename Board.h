@@ -44,12 +44,6 @@ class Board {
     // a  truth value indicating the placement success
     bool placeTile(Tile* tile, int row, int col);
 
-    // checks if input word abides by scrabble rules
-    bool validateMoves();
-
-    bool validateBoard();
-
-    bool validateMove(Move move);
 
 
 
