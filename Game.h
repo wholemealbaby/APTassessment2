@@ -35,9 +35,6 @@ class Game {
 
     //checks if the move is going down or right
     bool isStraight(int x1, int y1, int x2, int y2);
-    bool isConsecutive(int a, int b);
-    bool isVertical(int x1, int y1, int x2, int y2);
-
 
         // A player swaps a tile from their hand
     // with a random tile from the tile bag
@@ -78,6 +75,7 @@ class Game {
 
     void loadGame(String fileName);
 
+    //checks if move intersects with a word or the middle of the board
     bool isAdjacent(int x, int y);
 
 

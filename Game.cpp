@@ -15,7 +15,7 @@
 #include <regex>
 
 #define PLAYER_HAND_SIZE 7
-
+#define MIDDLE 7
 
 using std::string;
 using std::tuple;
@@ -427,20 +427,22 @@ void Game::place(String playerMove){
 
     // back up boardState and playerHand in case move is illegal
     backupHand.copy(&currentPlayer->hand);
-    int tilesPlaced = 0;
     backupBoard = board;
 
+    int tilesPlaced = 0;
+
+    // initalise positions used in validation functions
     int posX1;
     int posY1;
     int posX2;
     int posY2;
-//    int a;
-//    int b;
+
     string pos;
     string prevPos;
+    // num chances to proves intersected with a word
     int chances = 0;
 
-    // // while the move has not been finished
+    // while the move has not been finished
     while (playerMove != "Place Done"){
         bool inputValid = false;
         // Checking for EOF
@@ -459,6 +461,7 @@ void Game::place(String playerMove){
                 int indexOfTile = currentPlayer->hand.index(commandLetter);
                 if (indexOfTile != -1){
 
+                    // for moves other than first move, store previous move
                     if(tilesPlaced > 0)
                         prevPos = pos;
 
@@ -466,11 +469,15 @@ void Game::place(String playerMove){
                     pos = playerMove.substr(11, 3);
 
 
-                    // get coords of move and coords of move
+                    // set coords of move from pos
                     posX1 = pos[0] - 65;
                     posY1 = stoi(pos.substr(1, 3));
 
-
+                    // check if move is adjacent to a word
+                    // if not its okay, we increment chances.
+                    if (isAdjacent(posY1, posX1)) {
+                        chances++;
+                    }
 
                     if(tilesPlaced > 0) {
 
@@ -479,25 +486,13 @@ void Game::place(String playerMove){
                         posX2 = prevPos[0] - 65;
                         posY2 = stoi(prevPos.substr(1, 3));
 
+                        // check if previous move and move are in a straight line
+                        // if not , reset move
                         if (!isStraight(posX1, posY1, posX2, posY2)) {
                             cout << "Please place your tiles in a straight line. Try again." << endl;
                             resetMove();
                         }
-//                        if(isVertical(posX1, posY1, posX2, posY2)) {
-//                            a = posY1;
-//                            b = posY2;
-//                        }
-//                        if(!isVertical(posX1, posY1, posX2, posY2)) {
-//                            a = posX1;
-//                            b = posX2;
-//                        }
-//                        if (!isConsecutive(a, b)) {
-//                            cout << "Please place your tiles consecutively. Try again." << endl;
-//                            resetMove();
-//                        }
-                        if (isAdjacent(posX1, posY1)) {
-                            chances++;
-                        }
+
                     }
 
                     // Place the specified tile at the position specied at index 11
@@ -554,6 +549,9 @@ void Game::place(String playerMove){
             playerMove = "Place " + playerMove;
         }
     }
+
+    // chance is 0 that means the move never intersected a word
+    // therefore move is illegal so reset move
     if(chances < 1){
         cout << "please intersect with a word" << endl;
         resetMove();
@@ -565,41 +563,88 @@ void Game::place(String playerMove){
     }
 }
 bool Game::isStraight(int x1, int y1, int x2, int y2) {
+    // if x or ys are the same it is straight
     if((x1 == x2) || (y1 == y2))
         return true;
     return false;
 }
 
-bool Game::isVertical(int x1, int y1, int x2, int y2){
-    if(x1 == x2)
-        return true;
-    return false;
-}
-
-//bool Game::isConsecutive(int a, int b){
-//    if((a == (b + 1)) || (a == (b - 1)))
-//        return true;
-//    return false;
-//
-//}
-
 void Game::resetMove(){
+    // resets the board and player hand to the state it was before the move started
     currentPlayer->hand.copy(&backupHand);
     board = backupBoard;
     getPlayerMove();
 }
 
 bool Game::isAdjacent(int x, int y) {
-    if((x == 7) && (y == 7))
+
+    int dim = BOARD_DIM;
+    // check if it passes through middle (7,7)
+    if((x == MIDDLE) && (y == MIDDLE))
         return true;
-    if((x < 13) && backupBoard.boardState[x + 1][y] != " ")
-        return true;
-    if((x > 1) && backupBoard.boardState[x - 1][y] != " ")
-        return true;
-    if((y < 13) && backupBoard.boardState[x][y + 1] != " ")
-        return true;
-    if((y > 1) && backupBoard.boardState[x][y - 1] != " ")
-        return true;
+
+    // check if the coordinate intersects a word
+    // we know where a word if there is anything but a space
+    // before we do a general check, first we check for cases where we otherwise would go out of bounds
+
+    // check for top left corner case
+    if(x == 0 && y == 0){
+        if (backupBoard.boardState[x + 1][y] != " ")
+            return true;
+        if (backupBoard.boardState[x][y + 1] != " ")
+            return true;
+    }
+    // check for bottom left corner case
+    if(x == 0 && y == dim){
+        if (backupBoard.boardState[x + 1][y] != " ")
+            return true;
+        if (backupBoard.boardState[x][y -1] != " ")
+            return true;
+    }
+    // check for top right corner case
+    if(x == dim && y == 0){
+        if (backupBoard.boardState[x - 1][y] != " ")
+            return true;
+        if (backupBoard.boardState[x][y + 1] != " ")
+            return true;
+    }
+    //check for bottom right corner case
+    if(x == dim && y == dim){
+        if (backupBoard.boardState[x - 1][y] != " ")
+            return true;
+        if (backupBoard.boardState[x][y +-1] != " ")
+            return true;
+    }
+    //check for left and right walls
+    if((x == 0 || x == dim) && (x != 0 && x != dim)){
+        if (backupBoard.boardState[x][y + 1] != " ")
+            return true;
+        if (backupBoard.boardState[x][y - 1] != " ")
+            return true;
+    }
+    // check for top and bottom walls
+    if((y == 0 || y == dim) && (x != 0 && x != dim)){
+        if (backupBoard.boardState[x][y + 1] != " ")
+            return true;
+        if (backupBoard.boardState[x][y - 1] != " ")
+            return true;
+    }
+    // general check for all non-outer tiles
+    if((x > 0 && x < dim) && (y > 0 && y < dim)) {
+        //check right
+        if (backupBoard.boardState[x + 1][y] != " ")
+            return true;
+        // check left
+        if (backupBoard.boardState[x - 1][y] != " ")
+            return true;
+        // check down
+        if (backupBoard.boardState[x][y + 1] != " ")
+            return true;
+        //check up
+        if (backupBoard.boardState[x][y - 1] != " ")
+            return true;
+    }
+
     return false;
 }
 
