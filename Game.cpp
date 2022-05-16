@@ -3,13 +3,18 @@
 #include "Tile.h"
 #include "Board.h"
 #include "MainMenu.h"
+#include "split.h"
 #include <iostream>
 #include <fstream>
 #include <tuple>
 #include <vector>
 #include <fstream>
 #include <string>
+#include <sstream>
 #include <cmath>
+
+#define PLAYER_HAND_SIZE 7
+
 
 using std::string;
 using std::tuple;
@@ -28,7 +33,7 @@ Game::Game(){
     this->player2 = new Player("Player2");
     currentPlayer = player1;
     fillTileBag();
-    dealTiles(7);
+    dealTiles(PLAYER_HAND_SIZE);
     cout << "Please make your first move across H7" << endl;
     main();
 }
@@ -39,21 +44,45 @@ Game::Game(string player1Name, string player2Name){
     this->player2 = new Player(player2Name);
     currentPlayer = player1;
     fillTileBag();
-    dealTiles(7);
+    dealTiles(PLAYER_HAND_SIZE);
     cout << "Please make your first move across H7" << endl;
     main();
 }
 
-Game::Game(Player* player1, Player* player2, TileList bag, TileList toPlace){
-    this->player1 = player1;
-    this->player2 = player2;
+// Load game constructor
+Game::Game(Player* player1, Player* player2, String boardStateStr){
+    // Performing normal construction
+    this->player1 = new Player(player1);
+    this->player2 = new Player(player2);
     currentPlayer = player1;
-    this->tileBag = bag;
+    fillTileBag();
 
-    while(toPlace.size() > 0){
-        Tile tile = toPlace.getHead();
-        toPlace.pop(0);
-        placeTile(tile);
+    // Popping tiles in player1's hand from tileBag
+    for(int i = 0; i<player1->hand.size(); i++){
+        String tileLetter = player1->hand.get(i)->letter;
+        tileBag.pop(tileBag.index(tileLetter));
+    }
+
+    // Popping tiles in player2's hand from tileBag
+    for(int i = 0; i<player2->hand.size(); i++){
+        String tileLetter = player2->hand.get(i)->letter;
+        tileBag.pop(tileBag.index(tileLetter));
+    }
+
+    // Placing board state tiles on the board
+    vector<String> boardState;
+    // Seperating boardStateStr
+    split(boardStateStr, " ", boardState, true);
+
+    for (String tileInfo: boardState){
+        Tile* tileOnBoard;
+        // Popping tile from tile bag
+        String letter(1, tileInfo[0]);
+        tileBag.pop(tileBag.index(letter), tileOnBoard);
+        // Placing tile on the board
+        placeTile(tileOnBoard, tileInfo.substr(2,2));
+        delete tileOnBoard;
+        tileOnBoard = nullptr;
     }
 
     main();
@@ -65,7 +94,6 @@ Game::~Game(){
     player1 = nullptr;
     player2 = nullptr;
 }
-
 
 bool Game::replaceTile(Player* player, String letter){
     bool replacementValid = false;
@@ -135,6 +163,19 @@ bool Game::placeTile(Player* player, String letter, string pos){
     return placementValid;
 }
 
+void Game::placeTile(Tile* tile, string pos){
+    // Derives the integer x value buy substracting the ascii value 
+    // of 'A' from the character in the pos string
+    int posX = pos[0]-65; 
+    int posY = stoi(pos.substr(1, 3));
+
+    // Updating the tile's position
+    tile->posX = posX;
+    tile->posY = posY;
+
+    board.placeTile(tile, posX, posY);
+}
+
 bool Game::placeTile(Tile tile){
     bool placementValid = false;
         placementValid = board.placeTile(&tile, tile.posX, tile.posY);
@@ -175,49 +216,76 @@ void Game::fillTileBag(){
 }
 
 void Game::saveGame(Player* player1, Player* player2, String currentPlayer, TileList tileBag,  TileList boardTiles){
+    // Create save file name string
     String fileName = player1->name + "-VS-" + player2->name + ".txt";
-    String player1hand;
-    String player2hand;
+    cout << "Saving game as: " << fileName << endl;
+
+    // Strings containing the contents of the
+    // player's hands and the tileBag 
+    // TileList objects
+    String player1Hand;
+    String player2Hand;
     String tileBagString;    
+
+    // Save File stream
     ofstream saveFile (fileName);
 
+    // Writing player1 name and score to save file
     saveFile << player1->name << endl;
     saveFile << player1->score << endl;
 
+    // Building player1's hand string and 
+    // writing it to the save file
     while(player1->hand.size() > 0){
-        player1hand += player1->hand.get(0)->letter;
+        // Adding letter-value to the hand string
+        player1Hand += player1->hand.get(0)->letter + "-";
+        player1Hand += std::to_string(player1->hand.get(0)->value);
+        if (player1->hand.size() != 1){
+            player1Hand += ", ";
+        }
+
         player1->hand.pop(0);
     }
-    saveFile << player1hand << endl;
+    saveFile << player1Hand << endl;
 
-
+    // Writing player2 name and score to save file
     saveFile << player2->name << endl;
     saveFile << player2->score << endl;
 
+    // Building player2's hand string and 
+    // writing it to the save file
     while(player2->hand.size() > 0){
-        player2hand += player2->hand.get(0)->letter;
+        // Adding letter-value to the hand string
+        player2Hand += player2->hand.get(0)->letter + "-";
+        player2Hand += std::to_string(player2->hand.get(0)->value);
+        if (player2->hand.size() != 1){
+            player2Hand += ", ";
+        }
+
         player2->hand.pop(0);
     }
+    saveFile << player2Hand << endl;
 
-    saveFile << player2hand << endl;
-
+    // Recording current player
     saveFile << currentPlayer << endl;
 
+    
     while(tileBag.size() > 0){
         tileBagString += tileBag.get(0)->letter;
         tileBag.pop(0);
     }
-     saveFile << tileBagString << endl;
+    saveFile << tileBagString << endl;
 
-    cout << boardTiles.size();
+    // Writing info of tiles on the board
+    // to the save file
     while(boardTiles.size() > 0){
         saveFile << boardTiles.getHead()->letter;
-        saveFile << " ";
-        saveFile << boardTiles.getHead()->posX;
-        saveFile << " ";
+        saveFile << "@";
+        char pos_letter = 'A' + boardTiles.getHead()->posX;
+        saveFile << pos_letter;
         saveFile << boardTiles.getHead()->posY;
         boardTiles.pop(0);
-        saveFile << endl;
+        saveFile << " ";
     }
 }
 
@@ -315,10 +383,9 @@ void Game::getPlayerMove(){
             
             TileList boardTiles = board.getTiles();
 
-            cout << boardTiles.size() << endl;
             saveGame(player1, player2, currentPlayer->name, tileBag, boardTiles);
 
-            cout << "Saving game";
+            exit(EXIT_SUCCESS);
         }
 
         // Checking for EOF
@@ -440,7 +507,7 @@ void Game::place(String playerMove){
 
                         // checking to see if the player has placed
                         // their entire hand
-                        if (tilesPlaced == 6){
+                        if (tilesPlaced == PLAYER_HAND_SIZE - 1){
 
                             // Performing bingo special operation
                             cout << endl << "BINGO!!!" << endl<< endl;;
@@ -486,8 +553,8 @@ void Game::place(String playerMove){
     }
 
 
-    if (currentPlayer->hand.size() < 7){
-        dealTiles(7 - currentPlayer->hand.size(), currentPlayer);
+    if (currentPlayer->hand.size() < PLAYER_HAND_SIZE){
+        dealTiles(PLAYER_HAND_SIZE - currentPlayer->hand.size(), currentPlayer);
     }
 }
 bool Game::isStraight(int x1, int y1, int x2, int y2) {
