@@ -47,7 +47,7 @@ MainMenu::MainMenu(){
     array<string, 4> expInputs = {"1", "2", "3", "4"};
     // Recieving user input
     cout<<"> ";
-    cin>>userInput;
+    std::getline(std::cin, userInput);
 
     // Checking for EOF
     if (cin.eof()){
@@ -57,7 +57,7 @@ MainMenu::MainMenu(){
 
     while (arrayContains(expInputs, userInput) == -1){
         cout<<"Invalid Input"<<endl<<">"<<endl;
-        cin>>userInput;
+        std::getline(std::cin, userInput);
 
         // Checking for EOF
         if (cin.eof()){
@@ -93,7 +93,7 @@ void MainMenu::newGame(){
         cout << repeat;
         cout << " (uppercase characters only)" << endl;
         cout << "> ";
-        cin >> username;
+        std::getline(std::cin, username);
 
         // Checking for EOF
        if (cin.eof()){

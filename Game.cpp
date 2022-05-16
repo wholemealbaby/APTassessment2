@@ -80,7 +80,8 @@ bool Game::replaceTile(Player* player, String letter){
     
             tileBag.pop(std::rand() % tileBag.size(), tile);
             // Adding tile to hand
-            player->hand.append(tile); 
+            player->hand.append(tile);
+            delete tile;
 
             // Print the player's new hand
             cout << endl << "Your new hand:" << endl;
@@ -104,22 +105,32 @@ bool Game::placeTile(Player* player, String letter, string pos){
     // Get Tile from players hand   
     int tileIndex = player->hand.index(letter);
     if (tileIndex != -1){
-        // Removing the tile from the player's hand
-        Tile* tile;
-        player->hand.pop(player->hand.index(letter), tile);
 
         // Derives the integer x value buy substracting the ascii value 
         // of 'A' from the character in the pos string
-        tile->posX = pos[0]-65; 
-        tile->posY = stoi(pos.substr(1, 3));
+        int posX = pos[0]-65; 
+        int posY = stoi(pos.substr(1, 3));
 
-        // Flag to indicate if the placement succeeded
-        // Placing the tile on the board
-        placementValid = board.placeTile(tile, tile->posX, tile->posY);
-        if (placementValid == true){
-            currentPlayer->score = currentPlayer->score + tile->value;
+        // Checking that the position values
+        // are not out of range
+        if (posX < 15 && posY < 15){
+
+            // Removing the tile from the player's hand
+            Tile* tile;
+            player->hand.pop(player->hand.index(letter), tile);
+
+            // Updating the tile's position
+            tile->posX = posX;
+            tile->posY = posY;
+
+            // Placing tile on the board and recording
+            // placement success in a flag
+            placementValid = board.placeTile(tile, tile->posX, tile->posY);
+            if (placementValid == true){
+                currentPlayer->score = currentPlayer->score + tile->value;
+            }
+            delete tile;
         }
-        delete tile;
     }
     return placementValid;
 }
@@ -272,11 +283,6 @@ void Game::main(){
 void Game::getPlayerMove(){
     // String containing player's move
     String playerMove = "";
-    // Flushing input from cin 
-    // (If this isn't done the loop will execute once
-    // before the player can actually input anything
-    // causing > to print twice)
-    std::getline(std::cin, playerMove);
 
     // While the users input is valid
     bool inputValid = false;
@@ -321,6 +327,11 @@ void Game::getPlayerMove(){
             exit(0);
         }
 
+        // Printing invalid input if the input is still invalid
+        if (inputValid == false){
+            cout << "Invalid Input"<< endl;
+        }
+
     }
     cout << endl;
 }
@@ -344,6 +355,7 @@ void Game::printGameInfo(){
 
 void Game::place(String playerMove){
     int tilesPlaced = 0;
+
     // // while the move has not been finished
     while (playerMove != "Place Done"){
         bool inputValid = false;
@@ -368,12 +380,34 @@ void Game::place(String playerMove){
                     // if the placement succeeds, the input is valid.
                     if (placeTile(currentPlayer, commandLetter, playerMove.substr(11, 3)) == true){
                         inputValid = true;
-                        // Forcing player to follow through with place move
-                        cout << "> Place ";
-                        std::getline(std::cin, playerMove);
-                        // Adding place to the beginning of player command
-                        playerMove = "Place " + playerMove;
-                        tilesPlaced++;
+
+                        // checking to see if the player has placed
+                        // their entire hand
+                        if (tilesPlaced == 6){
+
+                            // Performing bingo special operation
+                            cout << endl << "BINGO!!!" << endl<< endl;;
+                            
+                            // Giving the player the chance to read the
+                            // bingo message before continuing
+                            do {
+                            cout << '\n' << "Press Enter to continue...";
+                            } while (cin.get() != '\n');
+
+                            currentPlayer->score = currentPlayer->score + 50;
+
+                            // Forcing move exit
+                            playerMove = "Place Done";
+                        }
+
+                        else{
+                            // Forcing player to follow through with place move
+                            cout << "> Place ";
+                            std::getline(std::cin, playerMove);
+                            // Adding place to the beginning of player command
+                            playerMove = "Place " + playerMove;
+                            tilesPlaced++;
+                        }
                     }
                 }
             }
@@ -388,6 +422,10 @@ void Game::place(String playerMove){
             // Adding place to the beginning of player command
             playerMove = "Place " + playerMove;
         }
+    }
+
+    if (currentPlayer->hand.size() < 7){
+        dealTiles(7 - currentPlayer->hand.size(), currentPlayer);
     }
 }
 
