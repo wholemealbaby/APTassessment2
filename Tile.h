@@ -30,8 +30,6 @@ class Tile {
    int posX;
    int posY;
 
-   // decides if tiles can be placed adjacent to it.
-   bool branchable;
 
 };
 

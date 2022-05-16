@@ -246,7 +246,6 @@ void MainMenu::showCredits(){
     cout<<"----------------------------------"<<endl;
 }
 
-<<<<<<< HEAD
 // Checks that the given username is all uppercase
 bool MainMenu::validateUsername(String username){
     // Current index in username
@@ -261,8 +260,5 @@ bool MainMenu::validateUsername(String username){
     }
     return isUpper;
 }
-=======
-
->>>>>>> 041854f456cf3d08400332518c73197362e39ea7
 
 #endif
