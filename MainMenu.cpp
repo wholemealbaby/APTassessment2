@@ -13,7 +13,6 @@
 #include <fstream>
 #include <ctype.h>
 #include "MainMenu.h"
-#include "arrayFunctions.cpp"
 #include "Player.h"
 #include "Game.h"
 #include "Board.h"
@@ -38,8 +37,8 @@ using std::make_tuple;
 using std::stoi;
 using std::getline;
 
-
-
+template <typename T, std::size_t size>
+static int arrayContains(const array<T, size>& expInputs, T userInput);
 
 MainMenu::MainMenu(){
     printOptions();
@@ -96,7 +95,6 @@ void MainMenu::newGame(){
     int repeat = 1;
     while (repeat <= NUM_PLAYERS){
         cout << "Enter a name for player ";
-        cout << repeat;
         cout << " (uppercase characters only)" << endl;
         cout << "> ";
         std::getline(std::cin, username);
@@ -114,7 +112,6 @@ void MainMenu::newGame(){
 
         else {
             cout<<endl<<endl;
-            cout << " made game" << endl;
             usernames.at(repeat-1) = username;
             repeat++;
         }
@@ -126,22 +123,26 @@ void MainMenu::newGame(){
 }
 
 void MainMenu::loadGame(){
-    // The save file is as follows, line-by-line.
+/* 
 
-    // Player 1 name
-    // Player 1 score
-    // Player 1 hand
-    // Player 2 name
-    // Player 2 score
-    // Player 2 hand
-    // current player (playerturn)
-    // Tile bag state
-    // Board state
+    The save file is as follows, line-by-line.
+
+    Player 1 name
+    Player 1 score
+    Player 1 hand
+    Player 2 name
+    Player 2 score
+    Player 2 hand
+    current player (playerturn)
+    Tile bag state
+    Board state
+
+*/
 
     // get save file name from user
     string fileName;
     cout << "Please enter save name" << endl;
-    cin >> fileName;
+    getline(cin, fileName);
 
     // Create a text string, which is used to output the text file
     string gameSave;
@@ -170,64 +171,50 @@ void MainMenu::loadGame(){
 
     String currentPlayerName = info[6];
 
+    String boardStateString = info[8];
 
-    TileList player1Hand = TileList();
-    for(int i = 0; i < (int)player1HandString.length(); i++){
-        String tileLetter(1, player1HandString.at(i));
-        tuple<string, int> data = make_tuple(tileLetter, getValue(tileLetter));
-        player1Hand.append(data);
+
+    TileList* player1Hand = new TileList();
+
+    vector<std::string> player1HandTiles;
+     split(player1HandString, ", ", player1HandTiles, true);
+    for(String tileInfo: player1HandTiles){
+        String letter(1, tileInfo[0]);
+        int value = stoi(tileInfo.substr(2, 2));
+        tuple<string, int> data = make_tuple(letter, value);
+        player1Hand->append(data);
     }
 
-    TileList player2Hand = TileList();
-    for(int i = 0; i < (int)player2HandString.length(); i++){
-        String tileLetter(1, player2HandString.at(i));
-        tuple<string, int> data = make_tuple(tileLetter, getValue(tileLetter));
-        player2Hand.append(data);
+    TileList* player2Hand = new TileList();
+
+    vector<std::string> player2HandTiles;
+    split(player2HandString, ", ", player2HandTiles, true);
+    for(String tileInfo: player2HandTiles){
+        String letter(1, tileInfo[0]);
+        int value = stoi(tileInfo.substr(2, 2));
+        tuple<string, int> data = make_tuple(letter, value);
+        player2Hand->append(data);
     }
-
-    String tileBagState = info.at(7);
-    TileList tileBag = TileList();
-    for(int i = 0; i < (int)tileBagState.length(); i++){
-        String tileLetter(1, tileBagState.at(i));
-        tuple<string, int> data = make_tuple(tileLetter, getValue(tileLetter));
-        tileBag.append(data);
-    }
-
-
-
 
     Player* player1 = new Player(player1Name, stoi(player1Score), player1Hand);
     Player* player2 = new Player(player2Name, stoi(player2Score), player2Hand);
 
-
-    TileList toPlace;
-    int numTiles = 0;
-    for(size_t i = 8; i < info.size(); i++){
-        vector<string> words;
-        split(info[i], ' ', words);
-
-        
-        tuple<string, int> data = make_tuple(words[0], getValue(words[0]));
-
-        toPlace.append(data);
-
-        Tile* tile = toPlace.get(numTiles);
-        tile->posX = stoi(words[1]);
-        tile->posY = stoi(words[2]);
-
-        numTiles++;
-
-    }
-
-
-
+    delete player1Hand;
+    delete player2Hand;
+    player1Hand = nullptr;
+    player2Hand = nullptr;
 
     // Now create a game and set the variable to what we have read from the file
     if(currentPlayerName == player1->name){
-        Game game(player1, player2, tileBag, toPlace);
+        Game game(player1, player2, boardStateString);
     }else{
-        Game game(player2, player1, tileBag, toPlace);
+        Game game(player2, player1, boardStateString);
     }
+
+    delete player1;
+    delete player2;
+    player1 = nullptr;
+    player2 = nullptr;
 
 
 }
@@ -246,7 +233,6 @@ void MainMenu::showCredits(){
     cout<<"----------------------------------"<<endl;
 }
 
-<<<<<<< HEAD
 // Checks that the given username is all uppercase
 bool MainMenu::validateUsername(String username){
     // Current index in username
@@ -261,8 +247,21 @@ bool MainMenu::validateUsername(String username){
     }
     return isUpper;
 }
-=======
 
->>>>>>> 041854f456cf3d08400332518c73197362e39ea7
+template <typename T, std::size_t size>
+static int arrayContains(const std::array<T, size>& expInputs, T userInput){
+    bool validInput = false;
+    int i = 0;
+    while (validInput == false && i < int(size)){
+        if (expInputs[i] == userInput){
+            validInput = true;
+        }
+        i++;
+    }
+    if (validInput == false){
+        i = -1;
+    }
+    return i;
+}
 
 #endif

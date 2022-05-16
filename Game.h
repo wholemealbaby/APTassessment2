@@ -18,7 +18,8 @@ class Game {
     public:
     Game();
     Game(string player1Name, string player2Name);
-    Game(Player* player1, Player* player2, TileList bag, TileList toPlace);
+    // Load Game Constructor
+    Game(Player* player1, Player* player2, String boardStateString);
     ~Game();
 
     // A player places a tile from their had on
@@ -26,6 +27,11 @@ class Game {
     // is unavailable
     bool placeTile(Player* player, String letter, string pos);
     bool placeTile(Tile tile);
+
+    // Used in load game constructor
+    // places a tile on the board without making
+    // any validity checks
+    void placeTile(Tile* tile, String pos);
 
 
     // A player swaps a tile from their hand
