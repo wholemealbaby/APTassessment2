@@ -11,8 +11,9 @@ using String = std::string;
 class Player {
     public:
     Player();
+    Player(Player* other);
     Player(string name);
-    Player(String name, int score, TileList list);
+    Player(String name, int score, TileList* list);
     String name;
     int score;
     TileList hand;
