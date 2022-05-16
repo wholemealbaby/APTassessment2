@@ -17,6 +17,7 @@
 #include "Game.h"
 #include "Board.h"
 #include "split.h"
+#include <regex>
 
 
 
@@ -52,6 +53,7 @@ MainMenu::MainMenu(){
     // Recieving user input
     cout<<"> ";
     std::getline(std::cin, userInput);
+    userInput = std::regex_replace( userInput, std::regex("\\r\\n|\\r|\\n"), "");
 
     // Checking for EOF
     if (cin.eof()){
@@ -60,7 +62,7 @@ MainMenu::MainMenu(){
     }
 
     while (arrayContains(expInputs, userInput) == -1){
-        cout<<"Invalid Input"<<endl<<">"<<endl;
+        cout<<"Invalid Input"<<endl<<"> "<<endl;
         std::getline(std::cin, userInput);
 
         // Checking for EOF
@@ -98,6 +100,7 @@ void MainMenu::newGame(){
         cout << " (uppercase characters only)" << endl;
         cout << "> ";
         std::getline(std::cin, username);
+        username = std::regex_replace( username, std::regex("\\r\\n|\\r|\\n"), "");
 
         // Checking for EOF
        if (cin.eof()){
