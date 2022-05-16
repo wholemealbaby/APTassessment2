@@ -19,12 +19,14 @@ class Board {
 
     // Prints the current state of the board
     void printBoard();
-
+    
     // Places a tile on the board and returns
     // a  truth value indicating the placement success
     bool placeTile(Tile* tile, int row, int col);
 
     TileList getTiles();
+
+    String checkAdjacentTiles(Tile tile);
 
     // Tiles that are current placed on the board
     TileList tiles;

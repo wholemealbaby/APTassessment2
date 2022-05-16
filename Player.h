@@ -12,6 +12,7 @@ class Player {
     public:
     Player();
     Player(string name);
+    Player(String name, int score, TileList list);
     String name;
     int score;
     TileList hand;

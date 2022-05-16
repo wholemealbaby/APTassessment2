@@ -29,6 +29,10 @@ class Tile {
    // Empty string if the tile has not been placed yet
    int posX;
    int posY;
+
+   // decides if tiles can be placed adjacent to it.
+   bool branchable;
+
 };
 
 #endif // ASSIGN2_TILE_H

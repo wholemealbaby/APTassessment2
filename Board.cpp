@@ -25,6 +25,7 @@ bool Board::placeTile(Tile* tile, int row, int col){
         boardState[row][col] = tile->letter;
         tiles.append(tile);
         placementSuccess = true;
+        tile->branchable = true;
     }
 
     return placementSuccess;
@@ -33,6 +34,13 @@ bool Board::placeTile(Tile* tile, int row, int col){
 TileList Board::getTiles(){
     return tiles;
 }
+
+// String Board::checkAdjacentTiles(Tile tile){
+//     // int row = tile.posX;
+//     // int col = tile.posY;
+//     //if(tile.
+ 
+// }
 
 void Board::printBoard(){
     array<string, 15> rows = 
