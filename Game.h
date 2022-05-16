@@ -18,12 +18,15 @@ class Game {
     public:
     Game();
     Game(string player1Name, string player2Name);
+    Game(Player* player1, Player* player2, TileList bag, TileList toPlace);
     ~Game();
 
     // A player places a tile from their had on
     // the board. Returns false if the position
     // is unavailable
     bool placeTile(Player* player, String letter, string pos);
+    bool placeTile(Tile tile);
+
 
     // A player swaps a tile from their hand
     // with a random tile from the tile bag
@@ -58,18 +61,17 @@ class Game {
     // Switches the currentPlayer
     void switchCurrentPlayer();
 
-    void saveGame(Player player1, Player player2, String currentPlayer, String tileBag, Board boardState);
-
+    void saveGame(Player* player1, Player* player2, String currentPlayer, TileList tileBag, TileList boardTiles);
 
     void loadGame(String fileName);
 
-    int getValue(String letter);
+    bool ifBranchable(Tile tile);
 
     Player* player1;
     Player* player2;
     Player* currentPlayer;
     
-    private:
+    //private:
     TileList tileBag;
     Board board;
 };

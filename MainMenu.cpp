@@ -3,14 +3,23 @@
 
 #include <string>
 #include <iostream>
+#include <fstream>
 #include <array>
 #include <cctype>
 #include <clocale>
+#include <tuple>
+#include <sstream>
+#include <vector>
+#include <fstream>
+#include <ctype.h>
 #include "MainMenu.h"
 #include "arrayFunctions.cpp"
 #include "Player.h"
 #include "Game.h"
 #include "Board.h"
+#include "split.h"
+
+
 
 #define NUM_PLAYERS 2
 
@@ -21,6 +30,14 @@ using std::cout;
 using std::cin;
 using std::endl;
 using std::isupper;
+using std::vector;
+using std::ifstream;
+using std::ofstream;
+using std::tuple;
+using std::make_tuple;
+using std::stoi;
+using std::getline;
+
 
 
 
@@ -108,10 +125,111 @@ void MainMenu::newGame(){
 
 }
 
-
 void MainMenu::loadGame(){
-    cout<<"Loading New Game"<<endl;
-    return;
+    // The save file is as follows, line-by-line.
+
+    // Player 1 name
+    // Player 1 score
+    // Player 1 hand
+    // Player 2 name
+    // Player 2 score
+    // Player 2 hand
+    // current player (playerturn)
+    // Tile bag state
+    // Board state
+
+    // get save file name from user
+    string fileName;
+    cout << "Please enter save name" << endl;
+    cin >> fileName;
+
+    // Create a text string, which is used to output the text file
+    string gameSave;
+    vector<string> info;
+    TileList boardList = TileList();
+
+    // Read from the text file
+    ifstream ReadFile(fileName);
+    if(!ReadFile){
+        cout << "cannot open file." << endl;
+        EXIT_FAILURE;
+    }
+
+    // Use a while loop together with the getline() function to read the file line by line
+    while (getline (ReadFile, gameSave)) {
+        info.push_back(gameSave);
+    }
+    // set the variables based on each line from the file
+    String player1Name = info[0];
+    String player1Score = info[1];
+    String player1HandString = info[2];
+
+    String player2Name = info[3];
+    String player2Score = info[4];
+    String player2HandString = info[5];
+
+    String currentPlayerName = info[6];
+
+
+    TileList player1Hand = TileList();
+    for(int i = 0; i < (int)player1HandString.length(); i++){
+        String tileLetter(1, player1HandString.at(i));
+        tuple<string, int> data = make_tuple(tileLetter, getValue(tileLetter));
+        player1Hand.append(data);
+    }
+
+    TileList player2Hand = TileList();
+    for(int i = 0; i < (int)player2HandString.length(); i++){
+        String tileLetter(1, player2HandString.at(i));
+        tuple<string, int> data = make_tuple(tileLetter, getValue(tileLetter));
+        player2Hand.append(data);
+    }
+
+    String tileBagState = info.at(7);
+    TileList tileBag = TileList();
+    for(int i = 0; i < (int)tileBagState.length(); i++){
+        String tileLetter(1, tileBagState.at(i));
+        tuple<string, int> data = make_tuple(tileLetter, getValue(tileLetter));
+        tileBag.append(data);
+    }
+
+
+
+
+    Player* player1 = new Player(player1Name, stoi(player1Score), player1Hand);
+    Player* player2 = new Player(player2Name, stoi(player2Score), player2Hand);
+
+
+    TileList toPlace;
+    int numTiles = 0;
+    for(size_t i = 8; i < info.size(); i++){
+        vector<string> words;
+        split(info[i], ' ', words);
+
+        
+        tuple<string, int> data = make_tuple(words[0], getValue(words[0]));
+
+        toPlace.append(data);
+
+        Tile* tile = toPlace.get(numTiles);
+        tile->posX = stoi(words[1]);
+        tile->posY = stoi(words[2]);
+
+        numTiles++;
+
+    }
+
+
+
+
+    // Now create a game and set the variable to what we have read from the file
+    if(currentPlayerName == player1->name){
+        Game game(player1, player2, tileBag, toPlace);
+    }else{
+        Game game(player2, player1, tileBag, toPlace);
+    }
+
+
 }
 
 void MainMenu::showCredits(){
@@ -128,6 +246,7 @@ void MainMenu::showCredits(){
     cout<<"----------------------------------"<<endl;
 }
 
+<<<<<<< HEAD
 // Checks that the given username is all uppercase
 bool MainMenu::validateUsername(String username){
     // Current index in username
@@ -142,5 +261,8 @@ bool MainMenu::validateUsername(String username){
     }
     return isUpper;
 }
+=======
+
+>>>>>>> 041854f456cf3d08400332518c73197362e39ea7
 
 #endif
