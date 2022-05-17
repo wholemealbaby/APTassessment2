@@ -78,8 +78,12 @@ class Game {
     //checks if move intersects with a word or the middle of the board
     bool isAdjacent(int x, int y);
 
+    //check if moves are consecutive
+    bool isConsecutive(int x, int y, int numTiles);
 
-    Player* player1;
+
+
+        Player* player1;
     Player* player2;
     Player* currentPlayer;
     
