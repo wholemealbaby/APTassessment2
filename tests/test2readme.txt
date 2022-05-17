@@ -1,0 +1,1 @@
+1. Tests that a stalemate occurs after 4 pass moves

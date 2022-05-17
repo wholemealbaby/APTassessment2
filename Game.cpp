@@ -510,7 +510,7 @@ void Game::place(String playerMove){
 
 
 
-
+                    bool moveAbidesRules = true;
                     if(tilesPlaced > 1) {
 
                         // get coords of move and coords of prev move
@@ -522,45 +522,50 @@ void Game::place(String playerMove){
                         // if not , reset move
                         if (!isStraight(posX1, posY1, posX2, posY2)) {
                             cout << "Please place your tiles in a straight line. Try again." << endl;
+                            moveAbidesRules = false;
+                            resetMove();
                         }
                         //check if moves were placed without any spaces between
                         if (!isConsecutive(posX1, posY1, tilesPlaced)) {
                             cout << "Please place your tiles consecutively. Try again." << endl;
+                            moveAbidesRules = false;
                             resetMove();
                         }
-
                     }
 
-                    // Place the specified tile at the position specied at index 11
-                    // if the placement succeeds, the input is valid.
-                    if (placeTile(currentPlayer, commandLetter, pos) == true){
-                        inputValid = true;
+                    if (moveAbidesRules){
+                        
+                        // Place the specified tile at the position specied at index 11
+                        // if the placement succeeds, the input is valid.
+                        if (placeTile(currentPlayer, commandLetter, pos) == true){
+                            inputValid = true;
 
-                        // Derives the integer x value buy substracting the ascii value
-                        // of 'A' from the character in the pos string
+                            // Derives the integer x value buy substracting the ascii value
+                            // of 'A' from the character in the pos string
 
-                        // checking to see if the player has placed
-                        // their entire hand
-                        if (tilesPlaced == PLAYER_HAND_SIZE - 1){
+                            // checking to see if the player has placed
+                            // their entire hand
+                            if (tilesPlaced == PLAYER_HAND_SIZE - 1){
 
-                            // Performing bingo special operation
-                            cout << endl << "BINGO!!!" << endl<< endl;
+                                // Performing bingo special operation
+                                cout << endl << "BINGO!!!" << endl<< endl;
 
-                            currentPlayer->score = currentPlayer->score + 50;
+                                currentPlayer->score = currentPlayer->score + 50;
 
-                            // Forcing move exit
-                            playerMove = "Place Done";
-                        }
+                                // Forcing move exit
+                                playerMove = "Place Done";
+                            }
 
-                        else{
-                            // Forcing player to follow through with place move
-                            cout << "> Place ";
-                            std::getline(std::cin, playerMove);
-                            cout << endl;
-                            playerMove = std::regex_replace( playerMove, std::regex("\\r\\n|\\r|\\n"), "");
-                            // Adding place to the beginning of player command
-                            playerMove = "Place " + playerMove;
-                            tilesPlaced++;
+                            else{
+                                // Forcing player to follow through with place move
+                                cout << "> Place ";
+                                std::getline(std::cin, playerMove);
+                                cout << endl;
+                                playerMove = std::regex_replace( playerMove, std::regex("\\r\\n|\\r|\\n"), "");
+                                // Adding place to the beginning of player command
+                                playerMove = "Place " + playerMove;
+                                tilesPlaced++;
+                            }
                         }
                     }
                 }
@@ -587,8 +592,8 @@ void Game::place(String playerMove){
         resetMove();
     }
     if(!isStraight(posX1, posY1, initialPosX, initialPosY)){
-        cout << "please place your tiles in a straight line. Try again." << endl;
-        resetMove();
+        cout << "Please place your tiles in a straight line. Try again." << endl;
+        // 
     }
 
     if (currentPlayer->hand.size() < PLAYER_HAND_SIZE){

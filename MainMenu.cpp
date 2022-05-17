@@ -159,6 +159,7 @@ void MainMenu::loadGame(){
     string fileName;
     cout << "Please enter save name" << endl;
     getline(cin, fileName);
+    fileName = std::regex_replace( fileName, std::regex("\\r\\n|\\r|\\n"), "");
 
     // Create a text string, which is used to output the text file
     string gameSave;

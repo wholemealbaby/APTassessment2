@@ -1,0 +1,110 @@
+
+Welcome to Scrabble!
+--------------------
+
+1. New Game
+2. Load Game
+3. Credits (Show student information)
+4. Quit
+> Enter a name for player  (uppercase characters only)
+> 
+
+Enter a name for player  (uppercase characters only)
+> 
+
+Let's Play!
+
+Please make your first move across H7
+BEEFHEART, it's your turn
+Score for BEEFHEART: 0
+Score for HOWLINGWOLF: 0
+
+    0   1   2   3   4   5   6   7   8   9   10  11  12  13  14
+  -------------------------------------------------------------
+A |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+B |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+C |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+D |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+E |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+F |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+G |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+H |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+I |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+J |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+K |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+L |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+M |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+N |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+O |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+
+Your hand is
+B-3, D-2, D-2, A-1, U-1, S-1, I-1
+
+> 
+> Place 
+> Place 
+> Place 
+Please intersect with an existing word or the center of the board (H7).
+> 
+> Place 
+> Place 
+> Place 
+
+
+HOWLINGWOLF, it's your turn
+Score for BEEFHEART: 10
+Score for HOWLINGWOLF: 0
+
+    0   1   2   3   4   5   6   7   8   9   10  11  12  13  14
+  -------------------------------------------------------------
+A |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+B |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+C |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+D |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+E |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+F |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+G |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+H |   |   |   |   |   |   | B | U | S |   |   |   |   |   |   |
+I |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+J |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+K |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+L |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+M |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+N |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+O |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+
+Your hand is
+V-4, C-3, L-1, T-1, T-1, I-1, I-1
+
+> 
+> Place 
+> Place 
+> Place 
+
+BEEFHEART, it's your turn
+Score for BEEFHEART: 10
+Score for HOWLINGWOLF: 6
+
+    0   1   2   3   4   5   6   7   8   9   10  11  12  13  14
+  -------------------------------------------------------------
+A |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+B |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+C |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+D |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+E |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+F |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+G |   |   |   |   |   |   |   | V |   |   |   |   |   |   |   |
+H |   |   |   |   |   |   | B | U | S |   |   |   |   |   |   |
+I |   |   |   |   |   |   |   | L |   |   |   |   |   |   |   |
+J |   |   |   |   |   |   |   | T |   |   |   |   |   |   |   |
+K |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+L |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+M |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+N |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+O |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+
+Your hand is
+F-4, M-3, D-2, D-2, A-1, I-1, A-1
+
+> 
+Saving game as: BEEFHEART-VS-HOWLINGWOLF.txt
