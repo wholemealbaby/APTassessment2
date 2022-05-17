@@ -583,7 +583,7 @@ void Game::place(String playerMove){
     // chance is 0 that means the move never intersected a word
     // therefore move is illegal so reset move
     if(chances < 1){
-        cout << "please intersect with a word" << endl;
+        cout << "Please intersect with an existing word or the center of the board (H7)." << endl;
         resetMove();
     }
     if(!isStraight(posX1, posY1, initialPosX, initialPosY)){
