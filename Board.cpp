@@ -20,11 +20,6 @@ int Board::board_length = 15;
 // Places a tile on the board and returns
 // a  truth value indicating the placement success
 bool Board::placeTile(Tile* tile, int row, int col){
-    string spot = boardState[row][col];
-    // If the specified postion is empty
-    if (tiles.size() != 0 && spot != " ")
-        return false;
-
     boardState[row][col] = tile->letter;
     tiles.append(tile);
 
