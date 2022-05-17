@@ -13,6 +13,7 @@
 #include <cstring>
 #include <sstream>
 #include <cmath>
+#include <regex>
 
 #define PLAYER_HAND_SIZE 7
 #define MIDDLE 7
@@ -359,6 +360,8 @@ void Game::getPlayerMove(){
         // Recieivng input
         cout << "> ";
         std::getline(std::cin, playerMove);
+        cout << endl;
+        playerMove = std::regex_replace(playerMove, std::regex("\\r\\n|\\r|\\n"), "");
         // Checking for placement
     
         if (playerMove.substr(0, 5) == "Place"){
@@ -542,6 +545,8 @@ void Game::place(String playerMove){
                             // Forcing player to follow through with place move
                             cout << "> Place ";
                             std::getline(std::cin, playerMove);
+                            cout << endl;
+                            playerMove = std::regex_replace( playerMove, std::regex("\\r\\n|\\r|\\n"), "");
                             // Adding place to the beginning of player command
                             playerMove = "Place " + playerMove;
                             tilesPlaced++;
@@ -557,6 +562,8 @@ void Game::place(String playerMove){
             // Forcing player to follow through with place move
             cout << "> Place ";
             std::getline(std::cin, playerMove);
+            cout << endl;
+            playerMove = std::regex_replace( playerMove, std::regex("\\r\\n|\\r|\\n"), "");
             // Adding place to the beginning of player command
             playerMove = "Place " + playerMove;
         }
