@@ -83,11 +83,14 @@ class Game {
     Player* player2;
     Player* currentPlayer;
     
-    //private:
     TileList backupHand;
     TileList tileBag;
     Board board;
     Board backupBoard;
+    
+    private:
+    // Current count of consecutive passes
+    int consecutivePasses;
 };
 
 #endif // ASSIGN2_NODE_

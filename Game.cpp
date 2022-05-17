@@ -35,6 +35,7 @@ Game::Game(){
     currentPlayer = player1;
     fillTileBag();
     dealTiles(PLAYER_HAND_SIZE);
+    consecutivePasses = 0;
     cout << "Please make your first move across H7" << endl;
     main();
 }
@@ -46,6 +47,7 @@ Game::Game(string player1Name, string player2Name){
     currentPlayer = player1;
     fillTileBag();
     dealTiles(PLAYER_HAND_SIZE);
+    consecutivePasses = 0;
     cout << "Please make your first move across H7" << endl;
     main();
 }
@@ -56,6 +58,7 @@ Game::Game(Player* player1, Player* player2, String boardStateStr){
     this->player1 = new Player(player1);
     this->player2 = new Player(player2);
     currentPlayer = player1;
+    consecutivePasses = 0;
     fillTileBag();
 
     // Popping tiles in player1's hand from tileBag
@@ -106,23 +109,18 @@ bool Game::replaceTile(Player* player, String letter){
             player->hand.pop(tileIndex);
             // Getting a random tile from tile bag
             Tile* tile;
-    
+            std::srand(0);
             tileBag.pop(std::rand() % tileBag.size(), tile);
             // Adding tile to hand
             player->hand.append(tile);
             delete tile;
 
-            // Print the player's new hand
-            cout << endl << "Your new hand:" << endl;
+            // Sort the player's new hand
             currentPlayer->hand.sort();
-            currentPlayer->hand.printTiles2();
 
             // Giving the player the chance to read their new
             // hand by waiting for user to press enter 
             // before continuing
-            do {
-            cout << '\n' << "Press Enter to continue...";
-            } while (cin.get() != '\n');
 
         }
     }
@@ -293,40 +291,47 @@ void Game::saveGame(Player* player1, Player* player2, String currentPlayer, Tile
 
 // Deals each player a given number of tiles
 void Game::dealTiles(int numTiles){
-    // For each tile to be dealt
-    for (int i = 0; i < numTiles; i++){
-        // Pop two random tiles from the tile bag
-        Tile* tile1; 
-        tileBag.pop(std::rand() % tileBag.size(), tile1);
-        Tile* tile2; 
-        tileBag.pop(std::rand() % tileBag.size(), tile2);
+    if (numTiles < tileBag.size()){
+            // For each tile to be dealt
+        for (int i = 0; i < numTiles; i++){
+            // Pop two random tiles from the tile bag
+            Tile* tile1; 
+            std::srand(0);
+            tileBag.pop(std::rand() % tileBag.size(), tile1);
+            Tile* tile2; 
+            std::srand(0);
+            tileBag.pop(std::rand() % tileBag.size(), tile2);
 
-        // Insert them into the players hands
-        player1->hand.insert(tile1->data, -1);
-        player2->hand.insert(tile2->data, -1);
+            // Insert them into the players hands
+            player1->hand.insert(tile1->data, -1);
+            player2->hand.insert(tile2->data, -1);
 
-        // Clean up the transfer pointers
-        delete tile1;
-        delete tile2;
+            // Clean up the transfer pointers
+            delete tile1;
+            delete tile2;
+        }
     }
 }
 
 // Deals the specified player a given number of tiles
 void Game::dealTiles(int numTiles, Player* player){
-    // For each tile to be dealt
-    for (int i = 0; i < numTiles; i++){
-        // Pop a random tile from the tile bag
-        Tile* tile; 
-        tileBag.pop(std::rand() % tileBag.size(), tile);
-        currentPlayer->hand.insert(tile->data, -1);
-        delete tile;
+    if (numTiles < tileBag.size()){
+        // For each tile to be dealt
+        for (int i = 0; i < numTiles; i++){
+            // Pop a random tile from the tile bag
+            Tile* tile; 
+            std::srand(0);
+            tileBag.pop(std::rand() % tileBag.size(), tile);
+            currentPlayer->hand.insert(tile->data, -1);
+            delete tile;
+        }
     }
 }
 
 void Game::switchCurrentPlayer(){
     // If the current player is player1 set the current player
     // to player2
-    if (currentPlayer == player1){
+    if (currentPlayer->name == player1->name){
         currentPlayer = player2;
     }
     // Otherwise set the current player to player1
@@ -337,7 +342,7 @@ void Game::switchCurrentPlayer(){
 
 void Game::main(){
     // Each iteration of this loop represents a turn
-    while (player1->hand.size() != 0 && player2->hand.size() != 0){
+    while (player1->hand.size() != 0 && player2->hand.size() != 0 && consecutivePasses < 4){
         // print game info at the start of a turn
         printGameInfo();
 
@@ -346,6 +351,16 @@ void Game::main(){
 
         // Switch the players for the next turn
         switchCurrentPlayer();
+    }
+
+    if (player1->hand.size() == 0){
+        cout<< player1->name << " WINS!" << endl;
+    }
+    else if (player2->hand.size() == 0){
+        cout<< player1->name << " WINS!" << endl << endl;;
+    }
+    else {
+        cout << "Stalemate."<<endl << endl;
     }
 }
 
@@ -367,6 +382,7 @@ void Game::getPlayerMove(){
             // Recieving player's word placement
             place(playerMove);
             inputValid = true;
+            consecutivePasses = 0;
         }
         // Checking for replacement
         else if (playerMove.substr(0, 7) == "Replace"){
@@ -374,11 +390,13 @@ void Game::getPlayerMove(){
             String letter(1, playerMove[8]);
             replaceTile(currentPlayer, letter);
             inputValid = true;
+            consecutivePasses = 0;
         }
 
         // Checking for pass
         else if (playerMove == "pass"){
             inputValid = true;
+            consecutivePasses++;
         }
 
         else if (playerMove == "save game" || playerMove == "Save Game"){
@@ -490,7 +508,6 @@ void Game::place(String playerMove){
                         // if not , reset move
                         if (!isStraight(posX1, posY1, posX2, posY2)) {
                             cout << "Please place your tiles in a straight line. Try again." << endl;
-                            resetMove();
                         }
 
                     }
@@ -508,13 +525,7 @@ void Game::place(String playerMove){
                         if (tilesPlaced == PLAYER_HAND_SIZE - 1){
 
                             // Performing bingo special operation
-                            cout << endl << "BINGO!!!" << endl<< endl;;
-                            
-                            // Giving the player the chance to read the
-                            // bingo message before continuing
-                            do {
-                            cout << '\n' << "Press Enter to continue...";
-                            } while (cin.get() != '\n');
+                            cout << endl << "BINGO!!!" << endl<< endl;
 
                             currentPlayer->score = currentPlayer->score + 50;
 
@@ -559,7 +570,12 @@ void Game::place(String playerMove){
 
 
     if (currentPlayer->hand.size() < PLAYER_HAND_SIZE){
-        dealTiles(PLAYER_HAND_SIZE - currentPlayer->hand.size(), currentPlayer);
+        if (PLAYER_HAND_SIZE - currentPlayer->hand.size() >= tileBag.size()){
+            dealTiles(tileBag.size(), currentPlayer);
+        }
+        else {
+            dealTiles(PLAYER_HAND_SIZE - currentPlayer->hand.size(), currentPlayer);
+        }
     }
 }
 bool Game::isStraight(int x1, int y1, int x2, int y2) {
