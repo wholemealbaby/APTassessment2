@@ -112,7 +112,7 @@ void MainMenu::newGame(){
         // Checking for EOF
        if (cin.eof()){
             cout << endl << "Goodbye!" << endl;
-            exit(EXIT_SUCCES);
+            exit(EXIT_SUCCESS);
         }
 
         // Verifying that username is uppercase
