@@ -42,7 +42,6 @@ template <typename T, std::size_t size>
 static int arrayContains(const array<T, size>& expInputs, T userInput);
 
 MainMenu::MainMenu(){
-    printOptions();
 
     // Recieving and validating user input
 
@@ -50,37 +49,45 @@ MainMenu::MainMenu(){
     string userInput;
     // Expected inputs for progression
     array<string, 4> expInputs = {"1", "2", "3", "4"};
-    // Recieving user input
-    cout<<"> ";
-    std::getline(std::cin, userInput);
-    userInput = std::regex_replace( userInput, std::regex("\\r\\n|\\r|\\n"), "");
 
-    // Checking for EOF
-    if (cin.eof()){
-        cout << endl << "Goodbye!" << endl;
-        exit(0);
-    }
-
-    while (arrayContains(expInputs, userInput) == -1){
-        cout<<"Invalid Input"<<endl<<"> "<<endl;
+    // Main game loop
+    while (!cin.eof()){
+        printOptions();
+        // Recieving user input
+        cout<<"> ";
         std::getline(std::cin, userInput);
+        userInput = std::regex_replace( userInput, std::regex("\\r\\n|\\r|\\n"), "");
 
         // Checking for EOF
         if (cin.eof()){
             cout << endl << "Goodbye!" << endl;
             exit(0);
         }
-    }
 
-    if (userInput == "1"){
-        newGame();
-    }
-    else if (userInput == "2"){
-        loadGame();
-    }
-    else if (userInput == "3"){
-        showCredits();
-    }
+        while (arrayContains(expInputs, userInput) == -1){
+            cout<<"Invalid Input"<<endl<<"> "<<endl;
+            std::getline(std::cin, userInput);
+
+            // Checking for EOF
+            if (cin.eof()){
+                cout << endl << "Goodbye!" << endl;
+                exit(0);
+            }
+        }
+
+        if (userInput == "1"){
+            newGame();
+        }
+        else if (userInput == "2"){
+            loadGame();
+        }
+        else if (userInput == "3"){
+            showCredits();
+        }
+        else if (userInput == "4"){
+            exit(EXIT_SUCCESS);
+        }
+}
 }
 
 void MainMenu::printOptions(){
@@ -105,7 +112,7 @@ void MainMenu::newGame(){
         // Checking for EOF
        if (cin.eof()){
             cout << endl << "Goodbye!" << endl;
-            exit(0);
+            exit(EXIT_SUCCES);
         }
 
         // Verifying that username is uppercase
@@ -119,10 +126,16 @@ void MainMenu::newGame(){
             repeat++;
         }
     }
-    cout << "Let's Play!" << endl << endl;
-    Game game(usernames[0], usernames[1]);
-    return;
-
+    // If the usernames are the same the input is invalid
+    if (usernames[0] == usernames[1]){
+        cout << "Invalid Input: Both players have the same username." << endl;
+        newGame();
+    }
+    // Otherwise start the game
+    else{
+        cout << "Let's Play!" << endl << endl;
+        Game game(usernames[0], usernames[1]);
+    }
 }
 
 void MainMenu::loadGame(){
