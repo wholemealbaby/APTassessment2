@@ -7,6 +7,8 @@
 #include "Tile.h"
 #include "Board.h"
 #include <iostream>
+#include <vector>
+#include <tuple>
 
 #define MIN_PLACE_ARG_LENGTH    13
 #define MAX_PLACE_ARG_LENGTH   14
@@ -22,6 +24,15 @@ class Game {
     Game(Player* player1, Player* player2, String boardStateString);
     ~Game();
 
+    // Deals each player a given number of random tiles from the tile bag
+    void dealTiles(int numTiles);
+
+     // Deals a given player a given number of random tiles from the tile bag
+    void dealTiles(int numTiles, Player* player);
+
+    // Reads in a place command from player and exectutes the move
+    void place(String playerMove);
+
     // A player places a tile from their had on
     // the board. Returns false if the position
     // is unavailable
@@ -33,24 +44,16 @@ class Game {
     // any validity checks
     void placeTile(Tile* tile, String pos);
 
-    //checks if the move is going down or right
-    bool isStraight(int x1, int y1, int x2, int y2);
-
-        // A player swaps a tile from their hand
+    // A player swaps a tile from their hand
     // with a random tile from the tile bag
     bool replaceTile(Player* player, String letter);
     
     // A player passes their turn
     void passTurn(Player* player);
 
-    // Deals each player a given number of random tiles from the tile bag
-    void dealTiles(int numTiles);
-
-     // Deals a given player a given number of random tiles from the tile bag
-    void dealTiles(int numTiles, Player* player);
-
-    // Reads in a place command from player and exectutes the move
-    void place(String playerMove);
+    // Checks if a given letter is in the palyer's hand
+    // and that the given position is free
+    bool validatePlacement(String pos, String letter);
 
     // Reads the tiles from tile set file and populates
     // the tile bag
@@ -69,21 +72,26 @@ class Game {
     // Switches the currentPlayer
     void switchCurrentPlayer();
 
-    void resetMove();
-
-    void saveGame(Player* player1, Player* player2, String currentPlayer, TileList tileBag, TileList boardTiles);
+    void saveGame(Player* player1, 
+    Player* player2, String currentPlayer, TileList tileBag, TileList boardTiles);
 
     void loadGame(String fileName);
 
-    //checks if move intersects with a word or the middle of the board
-    bool isAdjacent(int x, int y);
+    // Recieves a vector containing the string positions of the tiles in
+    // a word placed ny the player and indicates whether or not
+    // they were placed consecutively in a straight line from
+    // right to left or top to bottom
+    bool tilePlacementIsConsecutive(std::vector<String> placedTiles);
 
-    //check if moves are consecutive
-    bool isConsecutive(int x, int y, int numTiles);
+    // Recieves a string position such as C6 and
+    // converts it to an integer position (3, 6)
+    std::tuple<int, int> convertStringPosToInt(String pos);
 
-
-
-        Player* player1;
+    // Converts a vector of string positions into 2
+    // x and y integer vectors
+    std::tuple<std::vector<int>, std::vector<int>> convertStringPositions(std::vector<String> stringPositions);
+    
+    Player* player1;
     Player* player2;
     Player* currentPlayer;
     

@@ -37,9 +37,12 @@ class Board {
     // a  truth value indicating the placement success
     bool placeTile(Tile* tile, int row, int col);
 
+    // Checks that the given coordinates are free on the board
+    bool validateCoords(int row, int col);
 
-
-
+    // Checks that the given position is free on the board
+    bool validatePos(String pos);
+    
 
     // begins a new curr word
     void startNewMoves();

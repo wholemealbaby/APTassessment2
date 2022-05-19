@@ -20,11 +20,44 @@ int Board::board_length = 15;
 // Places a tile on the board and returns
 // a  truth value indicating the placement success
 bool Board::placeTile(Tile* tile, int row, int col){
-    boardState[row][col] = tile->letter;
-    tiles.append(tile);
+    bool placementValid = false;
+    if (boardState[row][col] == " "){
 
-    return true;
+        boardState[row][col] = tile->letter;
+        tiles.append(tile);
+        placementValid = true;
+    }
+
+    return placementValid;
 }
+
+// Checks that the given coordinates is free on the board
+bool Board::validateCoords(int row, int col){
+    bool placementValid = false;
+    if (boardState[row][col] == " "){
+        placementValid = true;
+    }
+
+    return placementValid;    
+}
+
+// Checks that the given string position is free on the board
+bool Board::validatePos(String pos){
+    // converting pos to integers
+    int posX = pos[0]-65; 
+    int posY = stoi(pos.substr(1, 3));
+
+    bool placementValid = false;
+    if (boardState[posX][posY] == " "){
+        placementValid = true;
+    }
+
+    return placementValid;    
+}
+
+
+
+
 
 TileList Board::getTiles(){
     return tiles;
