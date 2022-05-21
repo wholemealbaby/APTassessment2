@@ -568,13 +568,12 @@ bool Game::tilePlacementIsAdjacent(std::vector<String> placedTilesPositions){
                 adjacentExists = true;
     }
 
-
             //iterate through the x coords of the tiles in the word
     for(int i = 0; i < xVals.size(); i++){
         //iterate through the tiles placed on the board
         for(int j = 0; j < board.tiles.size(); j++){
             //check if x coord of tile in word is +1 or -1 of the x coord of a tile on the board. If so then it is adjacent.
-            if(xVals[i] == board.tiles.get(j)->posX + 1 || xVals[i] == board.tiles.get(j)->posX - 1)
+            if((xVals[i] == board.tiles.get(j)->posX + 1 || xVals[i] == board.tiles.get(j)->posX - 1) && yVals[i] == board.tiles.get(j)->posY)
                 adjacentExists = true;
         }
     }
@@ -584,7 +583,7 @@ bool Game::tilePlacementIsAdjacent(std::vector<String> placedTilesPositions){
         //iterate through the tiles placed on the board
         for(int j = 0; j < board.tiles.size(); j++){
             //check if y coord of tile in word is +1 or -1 of the y coord of a tile on the board. If so then it is adjacent.
-            if(yVals[i] == board.tiles.get(j)->posY + 1 || yVals[i] == board.tiles.get(j)->posY - 1)
+            if((yVals[i] == board.tiles.get(j)->posY + 1 || yVals[i] == board.tiles.get(j)->posY - 1) && xVals[i] == board.tiles.get(j)->posX)
                 adjacentExists = true;
         }
     }
