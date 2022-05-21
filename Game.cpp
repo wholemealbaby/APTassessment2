@@ -563,14 +563,14 @@ bool Game::tilePlacementIsAdjacent(std::vector<String> placedTilesPositions){
 
     // check if the word pass through the center. If so its the 1st word so it is legal.
     // We mark this by making adjacentExists true
-    for(int i = 0; i < xVals.size(); i++){
+    for(int i = 0; i < (int)xVals.size(); i++){
             if(xVals[i] == 7 && yVals[i] == 7)
                 adjacentExists = true;
     }
 
 
             //iterate through the x coords of the tiles in the word
-    for(int i = 0; i < xVals.size(); i++){
+    for(int i = 0; i < (int)xVals.size(); i++){
         //iterate through the tiles placed on the board
         for(int j = 0; j < board.tiles.size(); j++){
             //check if x coord of tile in word is +1 or -1 of the x coord of a tile on the board. If so then it is adjacent.
@@ -580,7 +580,7 @@ bool Game::tilePlacementIsAdjacent(std::vector<String> placedTilesPositions){
     }
 
     //iterate through the y coords of the tiles in the word
-    for(int i = 0; i < yVals.size(); i++){
+    for(int i = 0; i < (int)yVals.size(); i++){
         //iterate through the tiles placed on the board
         for(int j = 0; j < board.tiles.size(); j++){
             //check if y coord of tile in word is +1 or -1 of the y coord of a tile on the board. If so then it is adjacent.
@@ -635,16 +635,15 @@ bool Game::tilePlacementIsConsecutive(vector<String> placedTilesPositions){
             // value
 
             if (yVals[i] != posY1+i){
-                // // Iterating through positions between yVals[i-1]
-                // // and yVals[i] to see whether or not they are
-                // // already occupied by other tiles
-                // for (int j = yVals[i-1]; j < yVals[i]; j++){
-                //     // If the space between the two tiles is empty
-                //     if(board.validateCoords(xVals[i], yVals[j]) == true){
-                //         verticallyConsecutive = false;
-                //     }
-                // }
-                verticallyConsecutive = false;
+                // Iterating through positions between yVals[i-1]
+                // and yVals[i] to see whether or not they are
+                // already occupied by other tiles
+                for (int j = yVals[i-1]; j < yVals[i]; j++){
+                    // If the space between the two tiles is empty
+                    if(board.validateCoords(xVals[i], yVals[j]) == true){
+                        verticallyConsecutive = false;
+                    }
+                }
             }
 
             i++;
@@ -670,17 +669,16 @@ bool Game::tilePlacementIsConsecutive(vector<String> placedTilesPositions){
             // value
 
             if (xVals[i] != posX1+i){
-                // // Iterating through positions between yVals[i-1]
-                // // and yVals[i] to see whether or not they are
-                // // already occupied by other tiles
-                // for (int j = xVals[i-1]; j < xVals[i]; j++){
-                //     // If the space between the two tiles is empty
-                //     cout << board.validateCoords(j, yVals[i]) << endl;
-                //     if(board.validateCoords(j, yVals[i]) == true){
-                //         horizontallyConsecutive = false;
-                //     }
-                // }
-                horizontallyConsecutive = false;
+                // Iterating through positions between yVals[i-1]
+                // and yVals[i] to see whether or not they are
+                // already occupied by other tiles
+                for (int j = xVals[i-1]; j < xVals[i]; j++){
+                    // If the space between the two tiles is empty
+                    cout << board.validateCoords(j, yVals[i]) << endl;
+                    if(board.validateCoords(j, yVals[i]) == true){
+                        horizontallyConsecutive = false;
+                    }
+                }
             }
 
             i++;
