@@ -82,6 +82,8 @@ class Game {
     // they were placed consecutively in a straight line from
     // right to left or top to bottom
     bool tilePlacementIsConsecutive(std::vector<String> placedTiles);
+    bool tilePlacementIsAdjacent(std::vector<String> placedTiles);
+
 
     // Recieves a string position such as C6 and
     // converts it to an integer position (3, 6)

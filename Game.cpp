@@ -446,12 +446,9 @@ void Game::printGameInfo(){
 
 
 void Game::place(String playerMove){
+    dealTiles(PLAYER_HAND_SIZE - currentPlayer->hand.size(), currentPlayer);
     vector<String> placedTilesPositions;
     vector<String> placedLetters;
-
-    // back up boardState and playerHand in case move is illegal
-    backupHand.copy(&currentPlayer->hand);
-    backupBoard = board;
 
     int numTilesPlaced = 0;
 
@@ -510,9 +507,9 @@ void Game::place(String playerMove){
     }
 
     bool legalPlacement = true;
-    int i =0;
+    int i = 0;
    while (i < numTilesPlaced && legalPlacement == true){
-        if (tilePlacementIsConsecutive(placedTilesPositions) == true){
+        if (tilePlacementIsConsecutive(placedTilesPositions) == true && tilePlacementIsAdjacent(placedTilesPositions) == true){
             placeTile(currentPlayer,
             placedLetters[i],
             placedTilesPositions[i]);
@@ -550,6 +547,50 @@ bool Game::validatePlacement(String pos, String letter){
 
     return placementValid;
 }
+
+// Recieves a vector containing the string positions of the tiles in
+// a word placed ny the player and indicates if it is adjacent to another
+// already placed tile
+bool Game::tilePlacementIsAdjacent(std::vector<String> placedTilesPositions){
+    // turns true if there is at least 1 adjacent tile
+    bool adjacentExists = false;
+    // Converting string positions
+    // into 2 vectors of coordinates
+    tuple<vector<int>, vector<int>> convertedPositions;
+    convertedPositions = convertStringPositions(placedTilesPositions);
+    vector<int> xVals = std::get<0>(convertedPositions);
+    vector<int> yVals = std::get<1>(convertedPositions);
+
+    // check if the word pass through the center. If so its the 1st word so it is legal.
+    // We mark this by making adjacentExists true
+    for(int i = 0; i < xVals.size(); i++){
+            if(xVals[i] == 7 && yVals[i] == 7)
+                adjacentExists = true;
+    }
+
+
+            //iterate through the x coords of the tiles in the word
+    for(int i = 0; i < xVals.size(); i++){
+        //iterate through the tiles placed on the board
+        for(int j = 0; j < board.tiles.size(); j++){
+            //check if x coord of tile in word is +1 or -1 of the x coord of a tile on the board. If so then it is adjacent.
+            if(xVals[i] == board.tiles.get(j)->posX + 1 || xVals[i] == board.tiles.get(j)->posX - 1)
+                adjacentExists = true;
+        }
+    }
+
+    //iterate through the y coords of the tiles in the word
+    for(int i = 0; i < yVals.size(); i++){
+        //iterate through the tiles placed on the board
+        for(int j = 0; j < board.tiles.size(); j++){
+            //check if y coord of tile in word is +1 or -1 of the y coord of a tile on the board. If so then it is adjacent.
+            if(yVals[i] == board.tiles.get(j)->posY + 1 || yVals[i] == board.tiles.get(j)->posY - 1)
+                adjacentExists = true;
+        }
+    }
+    return adjacentExists;
+}
+
 
 // Recieves a vector containing the string positions of the tiles in
 // a word placed ny the player and indicates whether or not
