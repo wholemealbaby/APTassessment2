@@ -49,7 +49,8 @@ class TileList {
 
     // Searches for a tile with the given letter 
     // in the list and returns its pointer
-    Tile* search(int posX, int posY);
+    Tile* search(string letter);
+    Tile* searchPos(int posX, int posY);
 
     // Searches for a Tile with the given letter 
     // in the list and returns its index

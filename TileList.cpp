@@ -72,7 +72,31 @@ Tile* TileList::operator[](int index){
 
 // Searches for a tile with the given letter 
 // in the list and returns its pointer
-Tile* TileList::search(int posX, int posY){
+Tile* TileList::search(string letter){
+   bool found = false;
+   Tile* currentTile = head;
+   while (found != true && currentTile != nullptr){
+      if (currentTile->letter == letter){
+         found = true;
+      }
+      else{
+         currentTile = currentTile->next;
+      }
+   }
+
+   if (found == false){
+      currentTile = nullptr;
+   }
+
+   else {
+      currentTile = new Tile(currentTile, nullptr, nullptr);
+   }
+   return currentTile;
+}
+
+// Searches for a tile with the given letter 
+// in the list and returns its pointer
+Tile* TileList::searchPos(int posX, int posY){
    bool found = false;
    Tile* currentTile = head;
    while (found != true && currentTile != nullptr){

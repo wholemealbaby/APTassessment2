@@ -10,8 +10,8 @@
 #include <vector>
 #include <tuple>
 
-#define MIN_PLACE_ARG_LENGTH    13
-#define MAX_PLACE_ARG_LENGTH   14
+#define MIN_ARG_LENGTH    13
+#define MAX_ARG_LENGTH   14
 
 using std::string;
 
