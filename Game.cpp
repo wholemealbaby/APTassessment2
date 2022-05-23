@@ -138,19 +138,19 @@ bool Game::placeTile(Player* player, String letter, string pos){
     if (tileIndex != -1){
         // Derives the integer x value buy substracting the ascii value 
         // of 'A' from the character in the pos string
-        int posX = pos[0]-65; 
-        int posY = stoi(pos.substr(1, 3));
+        int row = pos[0]-65; 
+        int col = stoi(pos.substr(1, 3));
 
         // Checking that the position values
         // are not out of range
-        if (posX < 15 && posY < 15){
+        if (row < 15 && col < 15){
             // Removing the tile from the player's hand
             Tile* tile;
             player->hand.pop(player->hand.index(letter), tile);
 
             // Updating the tile's position
-            tile->posX = posX;
-            tile->posY = posY;
+            tile->posX = row;
+            tile->posY = col;
 
             // Placing tile on the board and recording
             // placement success in a flag
@@ -168,14 +168,14 @@ void Game::placeTile(Tile* tile, string pos){
     cout << "Called placetile 1"<< endl;
     // Derives the integer x value buy substracting the ascii value 
     // of 'A' from the character in the pos string
-    int posX = pos[0]-65; 
-    int posY = stoi(pos.substr(1, 3));
+    int row = pos[0]-65; 
+    int col = stoi(pos.substr(1, 3));
 
     // Updating the tile's position
-    tile->posX = posX;
-    tile->posY = posY;
+    tile->posX = row;
+    tile->posY = col;
 
-    board.placeTile(tile, posX, posY);
+    board.placeTile(tile, row, col);
 }
 
 bool Game::placeTile(Tile tile){
@@ -446,10 +446,8 @@ void Game::printGameInfo(){
 
 
 void Game::place(String playerMove){
-    dealTiles(PLAYER_HAND_SIZE - currentPlayer->hand.size(), currentPlayer);
     vector<String> placedTilesPositions;
     vector<String> placedLetters;
-
     int numTilesPlaced = 0;
 
     // while the move has not been finished
@@ -462,7 +460,7 @@ void Game::place(String playerMove){
         }
 
         // Check that the length of the arguments is valid
-        if (playerMove.size() == MIN_PLACE_ARG_LENGTH || playerMove.size() == MAX_PLACE_ARG_LENGTH){
+        if (playerMove.size() == MIN_ARG_LENGTH || playerMove.size() == MAX_ARG_LENGTH){
             // Check that arguments follow the correct syntax
             if (playerMove.substr(8, 2) == "at"){
 
@@ -472,19 +470,18 @@ void Game::place(String playerMove){
                 if (indexOfTile != -1){
                     // pos is the coordinates of the move
                     String pos = playerMove.substr(11, 3);
-
                     // Place the specified tile at the position specified at index 11
                     // of the command if the placement succeeds, the input is valid.
                     if (validatePlacement(pos, commandLetter) == true){
                         inputValid = true;
                         placedTilesPositions.push_back(pos);
                         placedLetters.push_back(commandLetter);
-
                         // Forcing player to follow through with place move
                         cout << "> Place ";
                         std::getline(std::cin, playerMove);
                         cout << endl;
                         playerMove = std::regex_replace( playerMove, std::regex("\\r\\n|\\r|\\n"), "");
+                        playerMove = std::regex_replace(playerMove, std::regex("\\r\\n|\\r|\\n"),"");
                         // Adding place to the beginning of player command
                         playerMove = "Place " + playerMove;
                         numTilesPlaced++;
@@ -492,7 +489,6 @@ void Game::place(String playerMove){
                 }
             }
         }
-
         // Input was invalid
         if (inputValid == false) {
             cout << "Invalid Input" << endl;
@@ -501,30 +497,41 @@ void Game::place(String playerMove){
             std::getline(std::cin, playerMove);
             cout << endl;
             playerMove = std::regex_replace( playerMove, std::regex("\\r\\n|\\r|\\n"), "");
+            playerMove = std::regex_replace(playerMove, std::regex("\\r\\n|\\r|\\n"),"");
             // Adding place to the beginning of player command
             playerMove = "Place " + playerMove;
         }
     }
-
     bool legalPlacement = true;
     int i = 0;
    while (i < numTilesPlaced && legalPlacement == true){
-        if (tilePlacementIsConsecutive(placedTilesPositions) == true && tilePlacementIsAdjacent(placedTilesPositions) == true){
+        bool placementConsectuive = tilePlacementIsConsecutive(placedTilesPositions);
+        bool placementAdjacent = tilePlacementIsAdjacent(placedTilesPositions);
+        if (placementConsectuive == true && placementAdjacent == true){
             placeTile(currentPlayer,
             placedLetters[i],
             placedTilesPositions[i]);
+            dealTiles(1, currentPlayer);
         }
         else{
             legalPlacement = false;
-            cout << "Invalid Input. Please ensure that you the enter word ";
-            cout << "start to finish and that your placements are ";
-            cout << "in a horizontal or vertical straight line ";
-            cout << "with no gaps." << endl;
+            if (!placementConsectuive){
+                cout << "Please ensure that you the enter word ";
+                cout << "start to finish and that your placements are ";
+                cout << "in a horizontal or vertical straight line ";
+                cout << "with no gaps." << endl;
+            }
+            if (!placementAdjacent){
+                cout << "All words placed must connect with another or be ";
+                cout << "placed over the center tile (H7) if there are no " ;
+                cout << "existing words." << endl;
+            }
             // Forcing player to follow through with place move
             cout << "> Place ";
             std::getline(std::cin, playerMove);
             cout << endl;
             playerMove = std::regex_replace( playerMove, std::regex("\\r\\n|\\r|\\n"), "");
+            playerMove = std::regex_replace(playerMove, std::regex("\\r\\n|\\r|\\n"),"");
             // Adding place to the beginning of player command
             playerMove = "Place " + playerMove;
             place(playerMove);
@@ -544,9 +551,9 @@ bool Game::validatePlacement(String pos, String letter){
             placementValid = true;
         }
     }
-
     return placementValid;
 }
+
 
 // Recieves a vector containing the string positions of the tiles in
 // a word placed ny the player and indicates if it is adjacent to another
@@ -558,32 +565,32 @@ bool Game::tilePlacementIsAdjacent(std::vector<String> placedTilesPositions){
     // into 2 vectors of coordinates
     tuple<vector<int>, vector<int>> convertedPositions;
     convertedPositions = convertStringPositions(placedTilesPositions);
-    vector<int> xVals = std::get<0>(convertedPositions);
-    vector<int> yVals = std::get<1>(convertedPositions);
+    vector<int> rows = std::get<0>(convertedPositions);
+    vector<int> cols = std::get<1>(convertedPositions);
 
     // check if the word pass through the center. If so its the 1st word so it is legal.
     // We mark this by making adjacentExists true
-    for(int i = 0; i < xVals.size(); i++){
-            if(xVals[i] == 7 && yVals[i] == 7)
+    for(int i = 0; i < (int)rows.size(); i++){
+            if(rows[i] == 7 && cols[i] == 7)
                 adjacentExists = true;
     }
 
             //iterate through the x coords of the tiles in the word
-    for(int i = 0; i < xVals.size(); i++){
+    for(int i = 0; i < (int)rows.size(); i++){
         //iterate through the tiles placed on the board
         for(int j = 0; j < board.tiles.size(); j++){
             //check if x coord of tile in word is +1 or -1 of the x coord of a tile on the board. If so then it is adjacent.
-            if((xVals[i] == board.tiles.get(j)->posX + 1 || xVals[i] == board.tiles.get(j)->posX - 1) && yVals[i] == board.tiles.get(j)->posY)
+            if((rows[i] == board.tiles.get(j)->posX + 1 || rows[i] == board.tiles.get(j)->posX - 1) && cols[i] == board.tiles.get(j)->posY)
                 adjacentExists = true;
         }
     }
 
     //iterate through the y coords of the tiles in the word
-    for(int i = 0; i < yVals.size(); i++){
+    for(int i = 0; i < (int)cols.size(); i++){
         //iterate through the tiles placed on the board
         for(int j = 0; j < board.tiles.size(); j++){
             //check if y coord of tile in word is +1 or -1 of the y coord of a tile on the board. If so then it is adjacent.
-            if((yVals[i] == board.tiles.get(j)->posY + 1 || yVals[i] == board.tiles.get(j)->posY - 1) && xVals[i] == board.tiles.get(j)->posX)
+            if((cols[i] == board.tiles.get(j)->posY + 1 || cols[i] == board.tiles.get(j)->posY - 1) && rows[i] == board.tiles.get(j)->posX)
                 adjacentExists = true;
         }
     }
@@ -592,27 +599,28 @@ bool Game::tilePlacementIsAdjacent(std::vector<String> placedTilesPositions){
 
 
 // Recieves a vector containing the string positions of the tiles in
-// a word placed ny the player and indicates whether or not
+// a word placed by the player and indicates whether or not
 // they were placed consecutively in a straight line from
 // right to left or top to bottom
 bool Game::tilePlacementIsConsecutive(vector<String> placedTilesPositions){
-
     // Flags to indicate if consecutive flow of tiles
     // has been broken
     bool verticallyConsecutive = true;
     bool horizontallyConsecutive = true;
-
     // Converting string positions
     // into 2 vectors of coordinates
     tuple<vector<int>, vector<int>> convertedPositions;
     convertedPositions = convertStringPositions(placedTilesPositions);
-    vector<int> xVals = std::get<0>(convertedPositions);
-    vector<int> yVals = std::get<1>(convertedPositions);
+
+    // Contains the row and col vals of each tile being 
+    // checked for consecutiveness
+    vector<int> rows = std::get<0>(convertedPositions);
+    vector<int> cols = std::get<1>(convertedPositions);
 
     // Position of the first tile in the word
-    int posX1 = xVals[0];
-    int posY1 = yVals[0];
-    
+    int firstTileRow = rows[0];
+    int firstTileCol = cols[0];
+
     // Iterating through tiles to test consecutiveness
 
     {
@@ -621,11 +629,11 @@ bool Game::tilePlacementIsConsecutive(vector<String> placedTilesPositions){
         int i = 1;
 
         // Checking vertical consecutiveness
-        while (i < (int)xVals.size() && verticallyConsecutive == true){
+        while (i < (int)rows.size() && verticallyConsecutive == true){
             // Checking that the current x value
             // matches the first x value
 
-            if (xVals[i] != posX1){
+            if (cols[i] != firstTileCol){
                 verticallyConsecutive = false;
             }
 
@@ -633,34 +641,33 @@ bool Game::tilePlacementIsConsecutive(vector<String> placedTilesPositions){
             // i spaces below the original y
             // value
 
-            if (yVals[i] != posY1+i){
-                // // Iterating through positions between yVals[i-1]
-                // // and yVals[i] to see whether or not they are
-                // // already occupied by other tiles
-                // for (int j = yVals[i-1]; j < yVals[i]; j++){
-                //     // If the space between the two tiles is empty
-                //     if(board.validateCoords(xVals[i], yVals[j]) == true){
-                //         verticallyConsecutive = false;
-                //     }
-                // }
-                verticallyConsecutive = false;
-            }
+            if (rows[i] != firstTileRow+i){
+                // Iterating through positions between rows[i-1]+1
+                // and rows[i] to see whether or not they are
+                // already occupied by other tiles
+                for (int row = rows[i-1]+1; row < rows[i]; row++){
 
+                    // If the spaces between placed tiles are empty
+                    // then the placement is not consecutive
+                    if(board.boardState[row][cols[i]] == " "){
+                        verticallyConsecutive = false;
+                    }
+                }
+            }
             i++;
         }
     }
-
     {
         // Iterator index. Starting at 1 as the front
         // element has already been stored.
         int i = 1;
 
         // Checking horizontal consecutiveness
-        while (i < (int)xVals.size() && horizontallyConsecutive == true){
+        while (i < (int)rows.size() && horizontallyConsecutive == true){
             // Checking that the current y value
             // matches the first y value
 
-            if (yVals[i] != posY1){
+            if (rows[i] != firstTileRow){    
                 horizontallyConsecutive = false;
             }
 
@@ -668,66 +675,67 @@ bool Game::tilePlacementIsConsecutive(vector<String> placedTilesPositions){
             // i spaces to the right the original x
             // value
 
-            if (xVals[i] != posX1+i){
-                // // Iterating through positions between yVals[i-1]
-                // // and yVals[i] to see whether or not they are
-                // // already occupied by other tiles
-                // for (int j = xVals[i-1]; j < xVals[i]; j++){
-                //     // If the space between the two tiles is empty
-                //     cout << board.validateCoords(j, yVals[i]) << endl;
-                //     if(board.validateCoords(j, yVals[i]) == true){
-                //         horizontallyConsecutive = false;
-                //     }
-                // }
-                horizontallyConsecutive = false;
+            if (cols[i] != firstTileCol+i){
+                // Iterating through positions between cols[i-1]+1
+                // and cols[i] to see whether or not they are
+                // already occupied by other tiles
+                for (int col = cols[i-1]+1; col < cols[i]; col++){
+                    // If the space between the two tiles is empty
+                    cout << board.validateCoords(col, cols[i]) << endl;
+                    if(board.boardState[rows[i]][col] == " "){
+                        horizontallyConsecutive = false;
+                    }
+                }
             }
-
             i++;
         }
     }
     
     bool returnVal;
-    
+
     if (verticallyConsecutive == true){
-        cout << "using vert" << endl;
         returnVal = verticallyConsecutive;
     }
     else{
-        cout << horizontallyConsecutive << endl;
         returnVal = horizontallyConsecutive;
     }
-
     return returnVal;
-}
-
-
-// Recieves a string position such as C6 and
-// converts it to an integer position (3, 6)
-std::tuple<int, int> Game::convertStringPosToInt(String pos){
-    int posX = pos[0]-65; 
-    int posY = stoi(pos.substr(1, 3));
-    return make_tuple(posX, posY);
 }
 
 // Converts a vector of string positions into 2
 // x and y integer vectors
 std::tuple<std::vector<int>, std::vector<int>> Game::convertStringPositions(vector<String> stringPositions){
-    vector<int> xVals;
-    vector<int> yVals;
+    vector<int> rows;
+    vector<int> cols;
 
     // Iterating through string positions
     // to convert them
-    int posX;
-    int posY;
+    int row;
+    int col;
+
+    // Iterating through string positions
+    // to convert them
     for (String pos: stringPositions){
-        // Converting the string pos to integer
-        posX = pos[0]-65; 
-        posY = stoi(pos.substr(1, 3));
+        tuple<int, int> intPos = convertStringPosToInt(pos);
+        row = get<0>(intPos);
+        col = get<1>(intPos);
         // Storing resulting coordinates in
         // appropriate vectors
-        xVals.push_back(posX);
-        yVals.push_back(posY);
+        rows.push_back(row);
+        cols.push_back(col);
+        rows.push_back(row);
+        cols.push_back(col);
     }
 
-    return make_tuple(xVals, yVals);
+    return make_tuple(rows, cols);
+    return make_tuple(rows, cols);
+} 
+
+
+// Recieves a string position such as C6 and
+// converts it to an integer position (3, 6)
+std::tuple<int, int> Game::convertStringPosToInt(String pos){
+    int row = pos[0]-65; 
+    int col = stoi(pos.substr(1, 3));
+    return make_tuple(row, col);
 }
